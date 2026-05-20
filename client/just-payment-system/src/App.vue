@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { keycloak } from './keycloak'
-
+import Admin from './layout/Admin.vue'
 onMounted(async () => {
   await keycloak.init({
     onLoad: 'login-required',
@@ -10,5 +10,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <RouterView></RouterView>
+  <Admin>
+    <RouterView></RouterView>
+  </Admin>
 </template>
