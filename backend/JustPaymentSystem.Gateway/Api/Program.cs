@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +47,23 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.MetadataAddress = builder.Configuration["Keycloak:MetadataAddress"]!;
+        options.Audience = builder.Configuration["Keycloak:Audience"];
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["Keycloak:Issuer"]
+        };
+
+        // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
+        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -58,9 +78,22 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
-
+app.MapGet("users/me", (ClaimsPrincipal user) =>
+{
+    return Results.Ok(new
+    {
+        UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
+        Email = user.FindFirstValue(ClaimTypes.Email),
+        Name = user.FindFirstValue("preferred_username"),
+        Claims = user.Claims.Select(c => new { c.Type, c.Value })
+    });
+})
+.RequireAuthorization();
 
 app.Run();
 
