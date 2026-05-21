@@ -38,6 +38,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/merchant/': RouteRecordInfo<
+      '/merchant/',
+      '/merchant',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/merchant/credentials': RouteRecordInfo<
       '/merchant/credentials',
       '/merchant/credentials',
@@ -48,6 +55,13 @@ declare module 'vue-router/auto-routes' {
     '/merchant/transactions': RouteRecordInfo<
       '/merchant/transactions',
       '/merchant/transactions',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/merchant/UserInfo': RouteRecordInfo<
+      '/merchant/UserInfo',
+      '/merchant/UserInfo',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -71,6 +85,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/merchant/index.vue': {
+      routes:
+        | '/merchant/'
+      views:
+        | never
+    }
     'src/pages/merchant/credentials.vue': {
       routes:
         | '/merchant/credentials'
@@ -80,6 +100,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/merchant/transactions.vue': {
       routes:
         | '/merchant/transactions'
+      views:
+        | never
+    }
+    'src/pages/merchant/UserInfo.vue': {
+      routes:
+        | '/merchant/UserInfo'
       views:
         | never
     }

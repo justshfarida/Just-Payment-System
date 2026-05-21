@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { keycloak } from '@/keycloak'
 
 const toast = useToast()
 const route = useRoute()
@@ -13,7 +14,7 @@ const links = [
     {
       label: 'Home',
       icon: 'i-lucide-house',
-      to: '/',
+      to: '/merchant',
       onSelect: () => {
         open.value = false
       },
@@ -36,6 +37,10 @@ const links = [
     },
   ],
 ] satisfies NavigationMenuItem[][]
+
+const logout = () => {
+  keycloak.logout()
+}
 </script>
 <template>
   <UDashboardGroup>
@@ -47,9 +52,6 @@ const links = [
       class="bg-elevated/25"
       :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
-      <template #header>
-        <div class="size-10">Logo</div>
-      </template>
       <template #default="{ collapsed }">
         <UNavigationMenu
           :collapsed="collapsed"
@@ -74,5 +76,10 @@ const links = [
     </UDashboardSidebar>
 
     <slot></slot>
+    <UDashboardNavbar>
+      <template #right>
+        <UButton color="neutral" @click="logout">Logout</UButton>
+      </template>
+    </UDashboardNavbar>
   </UDashboardGroup>
 </template>
