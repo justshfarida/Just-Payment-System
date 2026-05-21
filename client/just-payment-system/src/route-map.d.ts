@@ -38,9 +38,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/Home': RouteRecordInfo<
-      '/Home',
-      '/Home',
+    '/merchant/transactions': RouteRecordInfo<
+      '/merchant/transactions',
+      '/merchant/transactions',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -64,9 +64,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/Home.vue': {
+    'src/pages/merchant/transactions.vue': {
       routes:
-        | '/Home'
+        | '/merchant/transactions'
       views:
         | never
     }

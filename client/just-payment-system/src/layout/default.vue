@@ -1,0 +1,70 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import type { NavigationMenuItem } from '@nuxt/ui'
+
+const toast = useToast()
+const route = useRoute()
+
+const open = ref(false)
+
+const links = [
+  [
+    {
+      label: 'Home',
+      icon: 'i-lucide-house',
+      to: '/',
+      onSelect: () => {
+        open.value = false
+      },
+    },
+    {
+      label: 'Transactions',
+      icon: 'i-uil-transaction',
+      to: '/merchant/transactions',
+      onSelect: () => {
+        open.value = false
+      },
+    },
+  ],
+] satisfies NavigationMenuItem[][]
+</script>
+<template>
+  <UDashboardGroup>
+    <UDashboardSidebar
+      id="default"
+      v-model:open="open"
+      collapsible
+      resizable
+      class="bg-elevated/25"
+      :ui="{ footer: 'lg:border-t lg:border-default' }"
+    >
+      <template #header>
+        <div class="size-10">Logo</div>
+      </template>
+      <template #default="{ collapsed }">
+        <UNavigationMenu
+          :collapsed="collapsed"
+          :items="links[0]"
+          orientation="vertical"
+          tooltip
+          popover
+        />
+
+        <UNavigationMenu
+          :collapsed="collapsed"
+          :items="links[1]"
+          orientation="vertical"
+          tooltip
+          class="mt-auto"
+        />
+      </template>
+
+      <template #footer="{ collapsed }">
+        <UserMenu :collapsed="collapsed" />
+      </template>
+    </UDashboardSidebar>
+
+    <slot></slot>
+  </UDashboardGroup>
+</template>
