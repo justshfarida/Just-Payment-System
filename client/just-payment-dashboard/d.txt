@@ -1,0 +1,46 @@
+SuperAdminDashboard:
+
+1. Merchants list
+    Id
+    Name
+    Surname,
+    merchant_id
+
+2. transaction list
+    - id
+    merchant_id
+    date
+    status
+    card_mask
+    amount
+    currency
+    --- payload (data in json)
+3. notifications
+    -- 
+4. WebHook list
+    - id
+    - url
+    - success_url
+    - error_url
+5. WebHook http request statuses
+    - request_id
+    - status
+    - datetime
+    - retry_count
+
+MerchantDashboard:
+1. Transactions list
+    - id
+    date
+    status
+    amount
+    card_mask
+    currency
+    --- payload (data in json)
+2. His credentials
+    - merchnat_id
+    - private_key: generate new key 
+3. WebHook
+    - callback_url: required
+    - success_url
+    - error_url

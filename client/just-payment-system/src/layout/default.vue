@@ -35,6 +35,14 @@ const links = [
         open.value = false
       },
     },
+    {
+      label: 'Webhook',
+      icon: 'i-ic-baseline-webhook',
+      to: '/merchant/webhook',
+      onSelect: () => {
+        open.value = false
+      },
+    },
   ],
 ] satisfies NavigationMenuItem[][]
 
