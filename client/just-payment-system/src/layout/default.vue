@@ -26,6 +26,14 @@ const links = [
         open.value = false
       },
     },
+    {
+      label: 'My credentials',
+      icon: 'i-lucide-key-round',
+      to: '/merchant/credentials',
+      onSelect: () => {
+        open.value = false
+      },
+    },
   ],
 ] satisfies NavigationMenuItem[][]
 </script>

@@ -1,3 +1,6 @@
+<script setup lang="ts">
+import TransactionsTable from '../../components/transactions/TransactionsTable.vue'
+</script>
 <template>
-  <div v-for="i in [1, 2, 3, 4]">{{ i }}</div>
+  <TransactionsTable></TransactionsTable>
 </template>
