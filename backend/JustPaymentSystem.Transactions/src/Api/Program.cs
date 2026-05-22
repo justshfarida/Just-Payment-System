@@ -1,4 +1,6 @@
 using Api.Extensions;
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
 
+builder.Services.AddDbContext<TransactionDbContext>(op 
+    => op.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
