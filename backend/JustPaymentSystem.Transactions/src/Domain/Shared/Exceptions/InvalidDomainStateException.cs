@@ -5,4 +5,8 @@ public class InvalidDomainStateException : Exception
     public InvalidDomainStateException()
     {
     }
+
+    public InvalidDomainStateException(string? message) : base(message)
+    {
+    }
 }

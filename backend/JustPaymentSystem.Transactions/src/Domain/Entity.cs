@@ -4,8 +4,8 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     where TId : notnull
 {
     public TId Id { get; init; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
     public bool Equals(Entity<TId>? other)
     {
