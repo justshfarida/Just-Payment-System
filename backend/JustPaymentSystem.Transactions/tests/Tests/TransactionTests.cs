@@ -1,0 +1,102 @@
+﻿using Domain.Domains;
+using Domain.Shared.Enums;
+using Domain.Shared.Exceptions;
+using FluentAssertions;
+
+namespace Tests;
+
+
+public class TransactionTests
+{
+    private readonly Guid _validMerchantId = Guid.NewGuid();
+    private readonly string _validCurrency = "AZN";
+    private readonly string _validDescription = "Order #10492";
+
+    [Fact]
+    public void Create_WithValidParameters_ShouldInitializeTransactionCorrectly()
+    {
+        long amount = 10000; 
+
+        var transaction = Transaction.Create(_validMerchantId, amount, _validCurrency, _validDescription);
+
+        transaction.Should().NotBeNull();
+        transaction.Id.Should().NotBeEmpty();
+        transaction.MerchantId.Should().Be(_validMerchantId);
+        transaction.Amount.Should().Be(amount);
+        transaction.Currency.Should().Be(_validCurrency);
+        transaction.Status.Should().Be(TransactionStatus.PENDING);
+        transaction.Description.Should().Be(_validDescription);
+    }
+
+    [Theory]
+    [InlineData(100, 3)]       
+    [InlineData(1000, 30)]     
+    [InlineData(50, 2)]        
+    [InlineData(115, 3)]       
+    [InlineData(117, 4)]       
+    public void Create_ShouldCalculateFeeUsingSymmetricRounding(long amount, long expectedFee)
+    {
+        // Act
+        var transaction = Transaction.Create(_validMerchantId, amount, _validCurrency, _validDescription);
+
+        // Assert
+        transaction.FeeAmount.Should().Be(expectedFee);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-100)]
+    public void Create_WithAmountLessThanOrEqualToZero_ShouldThrowInvalidTransactionAmountException(long invalidAmount)
+    {
+        // Act
+        Action act = () => Transaction.Create(_validMerchantId, invalidAmount, _validCurrency, _validDescription);
+
+        // Assert
+        act.Should().Throw<InvalidTransactionAmountException>();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Create_WithNullOrEmptyCurrency_ShouldThrowException(string? invalidCurrency)
+    {
+        // Act
+        Action act = () => Transaction.Create(_validMerchantId, 1000, invalidCurrency!, _validDescription);
+
+        // Assert
+        act.Should().Throw<ArgumentException>(); 
+    }
+
+    [Fact]
+    public void Authorize_WhenStatusIsPending_ShouldTransitionToAuthorized()
+    {
+        // Arrange
+        var transaction = Transaction.Create(_validMerchantId, 5000, _validCurrency, _validDescription);
+
+        // Act
+        transaction.Authorize();
+
+        // Assert
+        transaction.Status.Should().Be(TransactionStatus.AUTHORIZED);
+    }
+
+    [Theory]
+    [InlineData(TransactionStatus.AUTHORIZED)]
+    [InlineData(TransactionStatus.CAPTURED)]
+    [InlineData(TransactionStatus.FAILED)]
+    [InlineData(TransactionStatus.VOIDED)]
+    public void Authorize_WhenStatusIsNotPending_ShouldThrowInvalidDomainStateException(TransactionStatus brokenStatus)
+    {
+        // Arrange
+        var transaction = Transaction.Create(_validMerchantId, 5000, _validCurrency, _validDescription);
+
+        transaction.SetStatus(brokenStatus);
+
+        // Act
+        Action act = () => transaction.Authorize();
+
+        // Assert
+        act.Should().Throw<InvalidDomainStateException>()
+           .WithMessage($"*Cannot authorize transaction from state: {brokenStatus}*");
+    }
+}
