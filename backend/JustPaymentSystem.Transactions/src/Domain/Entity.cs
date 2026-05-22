@@ -1,6 +1,7 @@
 ﻿namespace Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
+    where TId : notnull
 {
     public TId Id { get; init; }
     public DateTime CreatedAt { get; private set; }
@@ -14,5 +15,10 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     public override bool Equals(object? obj)
     {
         return Equals(obj as Entity<TId>);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }
