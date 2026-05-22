@@ -14,7 +14,8 @@ public class Transaction : Entity<Guid>
         string currency,
         long feeAmount,
         TransactionStatus status,
-        string description)
+        string description,
+        PaymentSnapshot paymentSnapshot)
     {
         Id = Guid.NewGuid(); 
         MerchantId = merchantId;
@@ -23,6 +24,7 @@ public class Transaction : Entity<Guid>
         FeeAmount = feeAmount;
         Status = status;
         Description = description;
+        PaymentSnapshot = paymentSnapshot;
     }
 
     public Guid MerchantId { get; private set; }
@@ -31,13 +33,15 @@ public class Transaction : Entity<Guid>
     public long FeeAmount { get; private set; }
     public TransactionStatus Status { get; private set; }
     public string Description { get; private set; } = string.Empty;
+    public Guid PaymentSnapshotId { get; init; }
+    public PaymentSnapshot PaymentSnapshot { get; private set; }
 
     public void SetStatus(TransactionStatus status)
     {
         this.Status = status;
     }
 
-    public static Transaction Create(Guid merchantId, long amount, string currency, string description)
+    public static Transaction Create(Guid merchantId, long amount, string currency, string description, PaymentType paymentType, string card)
     {
         currency.EnsureNotNullOrEmpty();
         description.EnsureNotNull();
@@ -55,7 +59,8 @@ public class Transaction : Entity<Guid>
             currency,
             feeAmount,
             TransactionStatus.PENDING,
-            description);
+            description,
+            PaymentSnapshot.Create(paymentType, card));
     }
 
     public void Authorize()

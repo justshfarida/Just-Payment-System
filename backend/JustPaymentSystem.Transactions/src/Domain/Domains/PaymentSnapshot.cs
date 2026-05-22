@@ -5,10 +5,9 @@ namespace Domain.Domains;
 
 public class PaymentSnapshot : Entity<Guid>
 {
-    private PaymentSnapshot(Guid transactionId, PaymentType type, string maskedIdentifier)
+    private PaymentSnapshot(PaymentType type, string maskedIdentifier)
     {
         Id = Guid.NewGuid();
-        TransactionId = transactionId;
         Type = type;
         MaskedIdentifier = maskedIdentifier;
     }
@@ -16,10 +15,11 @@ public class PaymentSnapshot : Entity<Guid>
     internal PaymentSnapshot() { }
 
     public Guid TransactionId { get; init; }
+    public Transaction Transaction { get; set; } 
     public PaymentType Type { get; private set; }
     public string MaskedIdentifier { get; private set; } = null!;
 
-    public static PaymentSnapshot Create(Guid transactionId, PaymentType paymentType, string sensitiveIdentifier)
+    public static PaymentSnapshot Create(PaymentType paymentType, string sensitiveIdentifier)
     {
         sensitiveIdentifier.EnsureNotNullOrEmpty();
 
@@ -30,7 +30,7 @@ public class PaymentSnapshot : Entity<Guid>
             _ => MaskGenericToken(sensitiveIdentifier)
         };
 
-        return new PaymentSnapshot(transactionId, paymentType, maskedValue);
+        return new PaymentSnapshot(paymentType, maskedValue);
     }
 
     private static string MaskCardNumber(string card)
