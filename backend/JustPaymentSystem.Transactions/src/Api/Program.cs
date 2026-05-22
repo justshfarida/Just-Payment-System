@@ -1,7 +1,10 @@
 using Api.Extensions;
+using Application.Features.Transactions.Queries;
+using Application.Features.Transactions.Queries.DTOs;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,7 @@ builder.Services.AddDbContext<TransactionDbContext>(op
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
+builder.Host.UseWolverine();
 
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 
@@ -48,5 +52,10 @@ app.MapGet("users/me", (ClaimsPrincipal user) =>
     });
 })
 .RequireAuthorization();
+
+app.MapGet("/transactions", async (IMessageBus bus) =>
+{
+    return await bus.InvokeAsync<List<TransactionResponse>>(new GetTransactionsQuery(1, 10, null, null, null));
+});
 
 app.Run();
