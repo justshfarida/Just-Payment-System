@@ -7,7 +7,7 @@ public static class AuthenticationExtension
 {
     extension(IServiceCollection services)
     {
-        public void AddAuthentication(IConfiguration configuration, bool isDevelopment = true)
+        public IServiceCollection AddAuthentication(IConfiguration configuration, bool isDevelopment = true)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -23,6 +23,7 @@ public static class AuthenticationExtension
                 // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
                 options.RequireHttpsMetadata = isDevelopment;
             });
+            return services;
         }
     }
 }

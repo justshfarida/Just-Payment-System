@@ -5,13 +5,13 @@ namespace Api.Extensions;
 public static class SwaggerExtensions
 {
     
-    extension(IServiceCollection service)
+    extension(IServiceCollection services)
     {
-        public void AddSwaggerWithAuth(IConfiguration configuration)
+        public IServiceCollection AddSwaggerWithAuth(IConfiguration configuration)
         {
             var keycloakAuthority = configuration["Keycloak:Authority"]!;
             var keycloakClientId = configuration["Keycloak:ClientId"]!;
-            service.AddSwaggerGen(options =>
+            services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -46,6 +46,7 @@ public static class SwaggerExtensions
         }
     });
             });
+            return services;
         }
     }
 }

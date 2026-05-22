@@ -5,6 +5,6 @@ namespace Application.Common.Interfaces;
 
 public interface ITransactionReadRepository
 {
-    Task<TransactionResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<TransactionResponse>> GetAllWithPaginationAsync(int page, int pageSize, Guid? merchantId, string? currency, TransactionStatus? status, CancellationToken cancellationToken = default);
 }
