@@ -32,6 +32,11 @@ public class Transaction : Entity<Guid>
     public TransactionStatus Status { get; private set; }
     public string Description { get; private set; } = string.Empty;
 
+    public void SetStatus(TransactionStatus status)
+    {
+        this.Status = status;
+    }
+
     public static Transaction Create(Guid merchantId, long amount, string currency, string description)
     {
         currency.EnsureNotNullOrEmpty();
