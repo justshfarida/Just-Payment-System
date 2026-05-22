@@ -3,7 +3,7 @@ import type { UserInfo } from '@/types/User'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-export const useAuthStore = defineStore('auth', () => {
+export const useUserStore = defineStore('user', () => {
   const initialized = ref(false)
   const authenticated = ref(false)
   const user = ref<UserInfo | null>(null)
@@ -12,9 +12,12 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.roles.includes('admin') ?? false
   })
 
+  function inRole(role: string) {
+    return user.value?.roles.includes(role) ?? false
+  }
   async function init() {
     const isAuthenticated = await keycloak.init({
-      onLoad: 'check-sso',
+      onLoad: 'login-required',
       pkceMethod: 'S256',
       checkLoginIframe: false,
     })
@@ -84,5 +87,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     refreshToken,
+    inRole,
   }
 })
