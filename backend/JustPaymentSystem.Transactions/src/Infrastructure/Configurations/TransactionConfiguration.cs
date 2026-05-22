@@ -10,7 +10,10 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
     {
         builder.HasKey(c => c.Id);
 
-        builder.HasOne(c => c.PaymentSnapshot);
+        builder.HasOne(x => x.PaymentSnapshot)
+         .WithOne(x => x.Transaction)
+         .HasForeignKey<PaymentSnapshot>(x => x.TransactionId)
+         .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(c => c.Currency)
             .HasMaxLength(3)
