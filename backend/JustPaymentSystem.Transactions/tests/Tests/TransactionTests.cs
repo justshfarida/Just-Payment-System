@@ -17,7 +17,7 @@ public class TransactionTests
     {
         long amount = 10000; 
 
-        var transaction = Transaction.Create(_validMerchantId, amount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16));
+        var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), amount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         transaction.Should().NotBeNull();
         transaction.Id.Should().NotBeEmpty();
@@ -37,7 +37,7 @@ public class TransactionTests
     public void Create_ShouldCalculateFeeUsingSymmetricRounding(long amount, long expectedFee)
     {
         // Act
-        var transaction = Transaction.Create(_validMerchantId, amount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16));
+        var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), amount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         // Assert
         transaction.FeeAmount.Should().Be(expectedFee);
@@ -49,7 +49,7 @@ public class TransactionTests
     public void Create_WithAmountLessThanOrEqualToZero_ShouldThrowInvalidTransactionAmountException(long invalidAmount)
     {
         // Act
-        Action act = () => Transaction.Create(_validMerchantId, invalidAmount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16));
+        Action act = () => Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), invalidAmount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         // Assert
         act.Should().Throw<InvalidTransactionAmountException>();
@@ -61,7 +61,7 @@ public class TransactionTests
     public void Create_WithNullOrEmptyCurrency_ShouldThrowException(string? invalidCurrency)
     {
         // Act
-        Action act = () => Transaction.Create(_validMerchantId, 1000, invalidCurrency!, _validDescription, PaymentType.CARD, new string('0', 16));
+        Action act = () => Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), 1000, invalidCurrency!, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         // Assert
         act.Should().Throw<ArgumentException>(); 
@@ -71,7 +71,7 @@ public class TransactionTests
     public void Authorize_WhenStatusIsPending_ShouldTransitionToAuthorized()
     {
         // Arrange
-        var transaction = Transaction.Create(_validMerchantId, 5000, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16));
+        var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), 5000, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         // Act
         transaction.Authorize();
@@ -88,7 +88,7 @@ public class TransactionTests
     public void Authorize_WhenStatusIsNotPending_ShouldThrowInvalidDomainStateException(TransactionStatus brokenStatus)
     {
         // Arrange
-        var transaction = Transaction.Create(_validMerchantId, 5000, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16));
+        var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), 5000, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         transaction.SetStatus(brokenStatus);
 
