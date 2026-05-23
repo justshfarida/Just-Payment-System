@@ -15,7 +15,7 @@ public sealed class GetTransactionsQueryHandler
         _transactionReadRepository = transactionReadRepository;
     }
 
-    public async Task<List<TransactionResponse>> Handle(GetTransactionsQuery request, CancellationToken cancellationToken)
+    public async Task<List<TransactionResponse>> Handle(GetTransactionsQuery request)
     {
         return await _transactionReadRepository.GetAllWithPaginationAsync(request.Page, request.PageSize, request.MerchantId, request.Currency, request.Status);
     }

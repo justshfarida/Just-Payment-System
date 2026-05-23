@@ -17,11 +17,10 @@ public sealed class GetTransactionByIdHandler
     }
 
     public async Task<TransactionResponse> Handle(
-        GetTransactionByIdQuery query,
-        CancellationToken cancellationToken)
+        GetTransactionByIdQuery query)
     {
         var transaction = await _transactionReadRepository
-            .GetByIdAsync(query.Id, cancellationToken);
+            .GetByIdAsync(query.Id);
 
         if (transaction is null)
         {
