@@ -8,15 +8,9 @@ public sealed record GetTransactionsQuery(int Page, int PageSize, Guid? Merchant
 
 public sealed class GetTransactionsQueryHandler
 {
-    private readonly ITransactionReadRepository _transactionReadRepository;
 
-    public GetTransactionsQueryHandler(ITransactionReadRepository transactionReadRepository)
+    public async Task<List<TransactionResponse>> Handle(GetTransactionsQuery request, ITransactionReadRepository transactionReadRepository)
     {
-        _transactionReadRepository = transactionReadRepository;
-    }
-
-    public async Task<List<TransactionResponse>> Handle(GetTransactionsQuery request)
-    {
-        return await _transactionReadRepository.GetAllWithPaginationAsync(request.Page, request.PageSize, request.MerchantId, request.Currency, request.Status);
+        return await transactionReadRepository.GetAllWithPaginationAsync(request.Page, request.PageSize, request.MerchantId, request.Currency, request.Status);
     }
 }

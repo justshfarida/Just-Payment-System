@@ -1,5 +1,6 @@
 using Api.Extensions;
 using Application;
+using Application.Common.Interfaces;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
 using Infrastructure;
@@ -15,10 +16,13 @@ var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
 builder.Services.AddDbContext<TransactionDbContext>(op 
     => op.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.RegisterRepositories();
+builder.Services.RegisterMapper();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
+    opts.Discovery.IncludeAssembly(typeof(ApplicationAssembly).Assembly);
     opts.UseRuntimeCompilation();
 });
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
@@ -56,9 +60,10 @@ app.MapGet("users/me", (ClaimsPrincipal user) =>
 })
 .RequireAuthorization();
 
-app.MapGet("/transactions", async (IMessageBus bus) =>
+app.MapGet("/transactions", async (ITransactionReadRepository bus) =>
 {
-    return await bus.InvokeAsync<List<TransactionResponse>>(new GetTransactionsQuery(1, 10, null, null, null));
+    var res = await bus.GetAllWithPaginationAsync(1, 1, null, null, null);
+    return Results.Ok(res);
 });
 
 app.Run();
