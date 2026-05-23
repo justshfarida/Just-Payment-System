@@ -1,0 +1,36 @@
+﻿using Application.Common.Interfaces;
+using Domain.Domains;
+using Domain.Shared.Enums;
+
+namespace Application.Features.Transactions.Commands;
+
+public sealed record CreateTransactionCommand(
+    string MerchantId,
+    string IdempotencyKey,
+    decimal Amount,
+    string Currency,
+    string OrderId,
+    string Description,
+    PaymentType PaymentType,
+    string Card,
+    string? SuccessRedirectUrl,
+    string? ErrorRedirectUrl,
+    string[] OtherAttr
+    );
+
+public sealed class CreateTransactionCommandHandler
+{
+    public async Task<Transaction> Handle(
+        CreateTransactionCommand command,
+        ITransactionRepository transactionRepository,
+        IUnitOfWork unitOfWork,
+        CancellationToken cancellationToken)
+    {
+        // TODO: Need add validation !!!
+
+        Transaction transaction = Transaction.Create(Guid.Parse(command.MerchantId), command.IdempotencyKey, (long)(command.Amount * 100), command.Currency, command.Description, command.PaymentType, command.Card, command.OrderId);
+        await transactionRepository.InsertAsync(transaction, cancellationToken);
+        await unitOfWork.SaveAsync(cancellationToken);
+        return transaction;
+    }
+}
