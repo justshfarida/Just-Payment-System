@@ -10,6 +10,7 @@ public class TransactionDbContext : DbContext
     }
 
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<TransactionAttribute> TransactionAttributes { get; set; }
     public DbSet<PaymentSnapshot> PaymentSnapshots { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

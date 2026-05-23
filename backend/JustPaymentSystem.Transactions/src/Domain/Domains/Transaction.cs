@@ -6,6 +6,7 @@ namespace Domain.Domains;
 
 public class Transaction : Entity<Guid>
 {
+    private readonly List<TransactionAttribute> _attributes;
     internal Transaction() { }
 
     private Transaction(
@@ -15,9 +16,11 @@ public class Transaction : Entity<Guid>
         long feeAmount,
         TransactionStatus status,
         string description,
-        PaymentSnapshot paymentSnapshot)
+        PaymentSnapshot paymentSnapshot,
+        string orderId,
+        string ıdempotencyKey)
     {
-        Id = Guid.NewGuid(); 
+        Id = Guid.NewGuid();
         MerchantId = merchantId;
         Amount = amount;
         Currency = currency;
@@ -25,26 +28,47 @@ public class Transaction : Entity<Guid>
         Status = status;
         Description = description;
         PaymentSnapshot = paymentSnapshot;
+        OrderId = orderId;
+        IdempotencyKey = ıdempotencyKey;
     }
 
     public Guid MerchantId { get; private set; }
+    public string IdempotencyKey { get; set; } = null!;
     public long Amount { get; private set; }
     public string Currency { get; private set; } = null!;
     public long FeeAmount { get; private set; }
     public TransactionStatus Status { get; private set; }
     public string Description { get; private set; } = string.Empty;
+    public string OrderId { get; set; } = null!;
     public Guid PaymentSnapshotId { get; init; }
     public PaymentSnapshot PaymentSnapshot { get; private set; }
+    public IReadOnlyList<TransactionAttribute> Attributes => _attributes.AsReadOnly();
 
     public void SetStatus(TransactionStatus status)
     {
         this.Status = status;
     }
 
-    public static Transaction Create(Guid merchantId, long amount, string currency, string description, PaymentType paymentType, string card)
+    public void AddAttribute(string attribute)
+    {
+        _attributes.Add(TransactionAttribute.Create(attribute));
+    }
+
+    public void AddAttributes(string[] attributes)
+    {
+        _attributes.AddRange(attributes.Select(TransactionAttribute.Create));
+    }
+
+    public void RemoveAttribute(Guid attributeId)
+    {
+        var attribute = _attributes.First(c => c.Id == attributeId);
+        _attributes.Remove(attribute);
+    }
+    public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, PaymentType paymentType, string card, string orderId)
     {
         currency.EnsureNotNullOrEmpty();
         description.EnsureNotNull();
+        idempotencyKey.EnsureNotNullOrEmpty();
 
         if (amount <= 0)
         {
@@ -60,7 +84,9 @@ public class Transaction : Entity<Guid>
             feeAmount,
             TransactionStatus.PENDING,
             description,
-            PaymentSnapshot.Create(paymentType, card));
+            PaymentSnapshot.Create(paymentType, card),
+            orderId,
+            idempotencyKey);
     }
 
     public void Authorize()

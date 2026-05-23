@@ -19,5 +19,15 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasMaxLength(3)
             .IsFixedLength();
 
+        builder.Property(c => c.OrderId)
+            .HasMaxLength(40);
+
+        builder.Property(c => c.IdempotencyKey)
+            .HasMaxLength(40);
+
+        builder.HasMany(c => c.Attributes)
+            .WithOne(c => c.Transaction)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }
