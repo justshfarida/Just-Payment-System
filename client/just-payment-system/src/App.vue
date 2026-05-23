@@ -19,7 +19,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div v-if="!isLoading">
+  <div v-if="!isLoading && userStore.authenticated">
     <Default v-if="userStore.inRole('merchant')">
       <RouterView></RouterView>
     </Default>

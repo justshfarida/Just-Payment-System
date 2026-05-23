@@ -76,6 +76,7 @@ const logout = () => {
           tooltip
           class="mt-auto"
         />
+        <UserInfo></UserInfo>
       </template>
 
       <template #footer="{ collapsed }">
@@ -84,10 +85,5 @@ const logout = () => {
     </UDashboardSidebar>
 
     <slot></slot>
-    <UDashboardNavbar>
-      <template #right>
-        <UButton color="neutral" @click="logout">Logout</UButton>
-      </template>
-    </UDashboardNavbar>
   </UDashboardGroup>
 </template>
