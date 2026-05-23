@@ -1,4 +1,5 @@
 using Api.Extensions;
+using Application;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
 using Infrastructure;
@@ -16,8 +17,10 @@ builder.Services.AddDbContext<TransactionDbContext>(op
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
-builder.Host.UseWolverine();
-
+builder.Host.UseWolverine(opts =>
+{
+    opts.UseRuntimeCompilation();
+});
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 
 builder.Services.AddAuthorization();
