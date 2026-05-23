@@ -20,7 +20,6 @@ public static class AuthenticationExtension
                     ValidIssuer = configuration["Keycloak:Issuer"]
                 };
 
-                // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
                 options.RequireHttpsMetadata = !isDevelopment;
             });
             return services;

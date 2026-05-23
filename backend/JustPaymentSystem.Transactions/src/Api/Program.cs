@@ -1,6 +1,5 @@
 using Api.Extensions;
 using Application;
-using Application.Common.Interfaces;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
 using Infrastructure;
@@ -23,7 +22,6 @@ builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
     opts.Discovery.IncludeAssembly(typeof(ApplicationAssembly).Assembly);
-    opts.UseRuntimeCompilation();
 });
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 
@@ -60,10 +58,9 @@ app.MapGet("users/me", (ClaimsPrincipal user) =>
 })
 .RequireAuthorization();
 
-app.MapGet("/transactions", async (ITransactionReadRepository bus) =>
+app.MapGet("/transactions", async (IMessageBus bus) =>
 {
-    var res = await bus.GetAllWithPaginationAsync(1, 1, null, null, null);
-    return Results.Ok(res);
+    return await bus.InvokeAsync<List<TransactionResponse>>(new GetTransactionsQuery(1, 10, null, null, null));
 });
 
 app.Run();

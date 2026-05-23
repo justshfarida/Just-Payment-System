@@ -26,6 +26,7 @@ public class TransactionReadRepository : ITransactionReadRepository
             .OrderByDescending(c => c.UpdatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
             .Select(c => _mapper.Map(c))
             .ToListAsync(cancellationToken);
     }
@@ -34,6 +35,7 @@ public class TransactionReadRepository : ITransactionReadRepository
     {
         return _db.Transactions
             .Include(c => c.PaymentSnapshot)
+            .AsNoTracking()
             .Select(c => _mapper.Map(c))
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
