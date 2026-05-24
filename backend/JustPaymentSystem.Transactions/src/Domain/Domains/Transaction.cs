@@ -6,7 +6,7 @@ namespace Domain.Domains;
 
 public class Transaction : Entity<Guid>
 {
-    private readonly List<TransactionAttribute> _attributes;
+    private readonly List<TransactionAttribute> _attributes = new();
     internal Transaction() { }
 
     private Transaction(
@@ -63,6 +63,11 @@ public class Transaction : Entity<Guid>
     {
         var attribute = _attributes.First(c => c.Id == attributeId);
         _attributes.Remove(attribute);
+    }
+
+    public void SetPaymentSnapshot(string card, PaymentType paymentType)
+    {
+        PaymentSnapshot = PaymentSnapshot.Create(paymentType, card);
     }
 
     public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, string orderId)

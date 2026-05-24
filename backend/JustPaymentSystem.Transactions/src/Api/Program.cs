@@ -1,3 +1,4 @@
+using Api.Endpoints;
 using Api.Extensions;
 using Application;
 using Application.Features.Transactions.Queries;
@@ -46,21 +47,8 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapGet("users/me", (ClaimsPrincipal user) =>
-{
-    return Results.Ok(new
-    {
-        UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
-        Email = user.FindFirstValue(ClaimTypes.Email),
-        Name = user.FindFirstValue("preferred_username"),
-        Claims = user.Claims.Select(c => new { c.Type, c.Value })
-    });
-})
-.RequireAuthorization();
-
-app.MapGet("/transactions", async (IMessageBus bus) =>
-{
-    return await bus.InvokeAsync<List<TransactionResponse>>(new GetTransactionsQuery(1, 10, null, null, null));
-});
+app.MapGroup("/transactions")
+    .MapTransactions()
+    .WithTags("Transactions");
 
 app.Run();

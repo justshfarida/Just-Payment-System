@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Features.Transactions.Events;
 using Domain.Domains;
 using Domain.Shared.Enums;
 
@@ -18,7 +19,7 @@ public sealed record CreateTransactionCommand(
 
 public sealed class CreateTransactionCommandHandler
 {
-    public async Task<Transaction> Handle(
+    public async Task<TransactionCreated> Handle(
         CreateTransactionCommand command,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
@@ -26,10 +27,16 @@ public sealed class CreateTransactionCommandHandler
     {
         // TODO: Need add validation !!!
 
-        Transaction transaction = Transaction.Create(Guid.Parse(command.MerchantId), command.IdempotencyKey, (long)(command.Amount * 100), command.Currency, command.Description, command.OrderId);
+        Transaction transaction = Transaction.Create(
+            Guid.Parse(command.MerchantId),
+            command.IdempotencyKey,
+            (long)(command.Amount * 100),
+            command.Currency,
+            command.Description,
+            command.OrderId);
         transaction.AddAttributes(command.OtherAttr);
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
-        return transaction;
+        return new(transaction.Id);
     }
 }
