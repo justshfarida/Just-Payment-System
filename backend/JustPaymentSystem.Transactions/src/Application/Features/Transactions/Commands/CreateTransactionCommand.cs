@@ -11,8 +11,6 @@ public sealed record CreateTransactionCommand(
     string Currency,
     string OrderId,
     string Description,
-    PaymentType PaymentType,
-    string Card,
     string? SuccessRedirectUrl,
     string? ErrorRedirectUrl,
     string[] OtherAttr
@@ -28,7 +26,8 @@ public sealed class CreateTransactionCommandHandler
     {
         // TODO: Need add validation !!!
 
-        Transaction transaction = Transaction.Create(Guid.Parse(command.MerchantId), command.IdempotencyKey, (long)(command.Amount * 100), command.Currency, command.Description, command.PaymentType, command.Card, command.OrderId);
+        Transaction transaction = Transaction.Create(Guid.Parse(command.MerchantId), command.IdempotencyKey, (long)(command.Amount * 100), command.Currency, command.Description, command.OrderId);
+        transaction.AddAttributes(command.OtherAttr);
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
         return transaction;

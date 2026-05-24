@@ -16,7 +16,7 @@ public class Transaction : Entity<Guid>
         long feeAmount,
         TransactionStatus status,
         string description,
-        PaymentSnapshot paymentSnapshot,
+        PaymentSnapshot? paymentSnapshot,
         string orderId,
         string ıdempotencyKey)
     {
@@ -40,8 +40,8 @@ public class Transaction : Entity<Guid>
     public TransactionStatus Status { get; private set; }
     public string Description { get; private set; } = string.Empty;
     public string OrderId { get; set; } = null!;
-    public Guid PaymentSnapshotId { get; init; }
-    public PaymentSnapshot PaymentSnapshot { get; private set; }
+    public Guid? PaymentSnapshotId { get; init; }
+    public PaymentSnapshot? PaymentSnapshot { get; private set; }
     public IReadOnlyList<TransactionAttribute> Attributes => _attributes.AsReadOnly();
 
     public void SetStatus(TransactionStatus status)
@@ -63,6 +63,31 @@ public class Transaction : Entity<Guid>
     {
         var attribute = _attributes.First(c => c.Id == attributeId);
         _attributes.Remove(attribute);
+    }
+
+    public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, string orderId)
+    {
+        currency.EnsureNotNullOrEmpty();
+        description.EnsureNotNull();
+        idempotencyKey.EnsureNotNullOrEmpty();
+
+        if (amount <= 0)
+        {
+            throw new InvalidTransactionAmountException(amount, 1, currency);
+        }
+
+        long feeAmount = (long)Math.Round((double)amount * 0.03, MidpointRounding.AwayFromZero);
+
+        return new Transaction(
+            merchantId,
+            amount,
+            currency,
+            feeAmount,
+            TransactionStatus.PENDING,
+            description,
+            null,
+            orderId,
+            idempotencyKey);
     }
     public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, PaymentType paymentType, string card, string orderId)
     {

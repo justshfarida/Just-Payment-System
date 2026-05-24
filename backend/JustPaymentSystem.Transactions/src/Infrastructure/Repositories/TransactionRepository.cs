@@ -5,12 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public class TransactionRepository : ITransactionRepository
+public class TransactionRepository : RepositoryBase<Transaction>, ITransactionRepository
 {
-    private readonly TransactionDbContext _db;
-    public TransactionRepository(TransactionDbContext context)
+    public TransactionRepository(TransactionDbContext context) : base(context)
     {
-        _db = context;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

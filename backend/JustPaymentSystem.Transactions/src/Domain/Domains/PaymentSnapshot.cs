@@ -19,6 +19,18 @@ public class PaymentSnapshot : Entity<Guid>
     public PaymentType Type { get; private set; }
     public string MaskedIdentifier { get; private set; } = null!;
 
+    public void SetMaskedIdentifier(string value)
+    {
+        value.EnsureNotNullOrEmpty();
+
+        string maskedValue = Type switch
+        {
+            PaymentType.CARD => MaskCardNumber(value),
+            PaymentType.BANK_TRANSFER => MaskBankIdentifier(value),
+            _ => MaskGenericToken(value)
+        };
+    }
+
     public static PaymentSnapshot Create(PaymentType paymentType, string sensitiveIdentifier)
     {
         sensitiveIdentifier.EnsureNotNullOrEmpty();
