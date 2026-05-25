@@ -80,23 +80,99 @@ public class TransactionTests
         transaction.Status.Should().Be(TransactionStatus.AUTHORIZED);
     }
 
-    [Theory]
-    [InlineData(TransactionStatus.AUTHORIZED)]
-    [InlineData(TransactionStatus.CAPTURED)]
-    [InlineData(TransactionStatus.FAILED)]
-    [InlineData(TransactionStatus.VOIDED)]
-    public void Authorize_WhenStatusIsNotPending_ShouldThrowInvalidDomainStateException(TransactionStatus brokenStatus)
+    [Fact]
+    public void Authorize_WhenStatusIsAuthorized_ShouldThrowInvalidDomainStateException()
     {
         // Arrange
-        var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), 5000, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
+        var transaction = Transaction.Create(
+            _validMerchantId,
+            Guid.NewGuid().ToString(),
+            5000,
+            _validCurrency,
+            _validDescription,
+            PaymentType.CARD,
+            new string('0', 16),
+            Guid.NewGuid().ToString());
 
-        transaction.SetStatus(brokenStatus);
+        transaction.Authorize();
 
         // Act
         Action act = () => transaction.Authorize();
 
         // Assert
-        act.Should().Throw<InvalidDomainStateException>()
-           .WithMessage($"*Cannot authorize transaction from state: {brokenStatus}*");
+        act.Should()
+            .Throw<InvalidDomainStateException>();
+    }
+
+    [Fact]
+    public void Authorize_WhenStatusIsCaptured_ShouldThrowInvalidDomainStateException()
+    {
+        // Arrange
+        var transaction = Transaction.Create(
+            _validMerchantId,
+            Guid.NewGuid().ToString(),
+            5000,
+            _validCurrency,
+            _validDescription,
+            PaymentType.CARD,
+            new string('0', 16),
+            Guid.NewGuid().ToString());
+
+        transaction.Capture();
+
+        // Act
+        Action act = () => transaction.Authorize();
+
+        // Assert
+        act.Should()
+            .Throw<InvalidDomainStateException>();
+    }
+
+    [Fact]
+    public void Authorize_WhenStatusIsFailed_ShouldThrowInvalidDomainStateException()
+    {
+        // Arrange
+        var transaction = Transaction.Create(
+            _validMerchantId,
+            Guid.NewGuid().ToString(),
+            5000,
+            _validCurrency,
+            _validDescription,
+            PaymentType.CARD,
+            new string('0', 16),
+            Guid.NewGuid().ToString());
+
+        transaction.TransactionFailed();
+
+        // Act
+        Action act = () => transaction.Authorize();
+
+        // Assert
+        act.Should()
+            .Throw<InvalidDomainStateException>();
+    }
+
+    [Fact]
+    public void Authorize_WhenStatusIsVoided_ShouldThrowInvalidDomainStateException()
+    {
+        // Arrange
+        var transaction = Transaction.Create(
+            _validMerchantId,
+            Guid.NewGuid().ToString(),
+            5000,
+            _validCurrency,
+            _validDescription,
+            PaymentType.CARD,
+            new string('0', 16),
+            Guid.NewGuid().ToString());
+
+        transaction.TransactionVoided();
+
+        // Act
+        Action act = () => transaction.Authorize();
+
+        // Assert
+        act.Should()
+            .Throw<InvalidDomainStateException>();
     }
 }

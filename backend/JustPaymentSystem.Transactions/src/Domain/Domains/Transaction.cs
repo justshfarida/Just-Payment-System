@@ -44,9 +44,36 @@ public class Transaction : Entity<Guid>
     public PaymentSnapshot? PaymentSnapshot { get; private set; }
     public IReadOnlyList<TransactionAttribute> Attributes => _attributes.AsReadOnly();
 
-    public void SetStatus(TransactionStatus status)
+    public void Authorize()
     {
-        this.Status = status;
+        if (Status != TransactionStatus.PENDING)
+            throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
+
+        Status = TransactionStatus.AUTHORIZED;
+    }
+
+    public void Capture()
+    {
+        if(Status != TransactionStatus.PENDING && Status != TransactionStatus.AUTHORIZED)
+            throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
+        
+        Status = TransactionStatus.CAPTURED;
+    }
+
+    public void TransactionFailed()
+    {
+        if (Status != TransactionStatus.PENDING && Status != TransactionStatus.AUTHORIZED)
+            throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
+
+        Status = TransactionStatus.FAILED;
+    }
+
+    public void TransactionVoided()
+    {
+        if (Status != TransactionStatus.PENDING && Status != TransactionStatus.AUTHORIZED)
+            throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
+
+        Status = TransactionStatus.VOIDED;
     }
 
     public void AddAttribute(string attribute)
@@ -119,11 +146,4 @@ public class Transaction : Entity<Guid>
             idempotencyKey);
     }
 
-    public void Authorize()
-    {
-        if (Status != TransactionStatus.PENDING)
-            throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
-
-        Status = TransactionStatus.AUTHORIZED;
-    }
 }

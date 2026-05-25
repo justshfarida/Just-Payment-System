@@ -1,10 +1,17 @@
 ﻿using Application.Common.Interfaces;
 using Application.Features.Transactions.Events;
 using Domain.Domains;
-using Domain.Shared.Enums;
+using Domain.Events;
 
 namespace Application.Features.Transactions.Commands;
 
+// Client request for payment with data and signature
+// Transaction creates with pending result 
+// Redirect url sent to client
+// Client gives card credentials and submits
+// Transaction service checks data and signature and updates if payment is succesfull and adds payment snapshot 
+// Webhook service send http request to callback endpoint of client with data and signature
+// Client callback can send Ok which means state changed and BadRequest for refund
 public sealed record CreateTransactionCommand(
     string MerchantId,
     string IdempotencyKey,
@@ -19,7 +26,7 @@ public sealed record CreateTransactionCommand(
 
 public sealed class CreateTransactionCommandHandler
 {
-    public async Task<TransactionCreated> Handle(
+    public async Task Handle(
         CreateTransactionCommand command,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
@@ -37,6 +44,6 @@ public sealed class CreateTransactionCommandHandler
         transaction.AddAttributes(command.OtherAttr);
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
-        return new(transaction.Id);
+        //return new(transaction.Id);
     }
 }
