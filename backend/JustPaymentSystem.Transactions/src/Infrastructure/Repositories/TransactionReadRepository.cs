@@ -16,7 +16,7 @@ public class TransactionReadRepository : ITransactionReadRepository
         _mapper = mapper;
     }
 
-    public Task<List<TransactionResponse>> GetAllWithPaginationAsync(int page, int pageSize, Guid? merchantId, string? currency, TransactionStatus? status, CancellationToken cancellationToken = default)
+    public Task<List<TransactionResponse>> GetAllWithPaginationAsync(int page, int pageSize, string? merchantId, string? currency, TransactionStatus? status, CancellationToken cancellationToken = default)
     {
         return _db.Transactions
             .Include(c => c.PaymentSnapshot)

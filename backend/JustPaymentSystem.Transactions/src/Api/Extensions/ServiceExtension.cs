@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Common.Interfaces;
+using FluentValidation;
 using Infrastructure.Repositories;
 
 namespace Api.Extensions;
@@ -14,6 +15,12 @@ public static class ServiceExtension
             services.AddScoped<ITransactionReadRepository, TransactionReadRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            return services;
+        }
+
+        public IServiceCollection RegisterServices()
+        {
+            services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
             return services;
         }
 

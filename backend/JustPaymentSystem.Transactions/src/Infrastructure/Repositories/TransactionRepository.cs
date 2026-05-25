@@ -12,7 +12,7 @@ public class TransactionRepository : RepositoryBase<Transaction>, ITransactionRe
 
     public Task<Transaction?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return _db.Transactions
+        return FindByCondition(c => c.Id == id, true)
             .Include(c => c.PaymentSnapshot)
             .FirstOrDefaultAsync(c => c.Id == id);
     }

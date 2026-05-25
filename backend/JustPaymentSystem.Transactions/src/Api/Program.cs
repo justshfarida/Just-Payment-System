@@ -13,6 +13,8 @@ var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
 builder.Services.AddDbContext<TransactionDbContext>(op
     => op.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.AddControllers();
+builder.Services.RegisterServices();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
 builder.Services.AddEndpointsApiExplorer();
@@ -47,5 +49,7 @@ app.UseHttpsRedirection();
 app.MapGroup("/transactions")
     .MapTransactions()
     .WithTags("Transactions");
+
+app.MapControllers();
 
 app.Run();

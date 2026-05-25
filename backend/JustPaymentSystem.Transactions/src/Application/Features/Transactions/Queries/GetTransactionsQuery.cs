@@ -4,7 +4,7 @@ using Domain.Shared.Enums;
 
 namespace Application.Features.Transactions.Queries;
 
-public sealed record GetTransactionsQuery(int Page, int PageSize, Guid? MerchantId, string? Currency, TransactionStatus? Status);
+public sealed record GetTransactionsQuery(int Page, int PageSize, string? MerchantId, string? Currency, TransactionStatus? Status);
 
 public sealed class GetTransactionsQueryHandler
 {
