@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Domains;
 using Domain.Events;
 using FluentValidation;
@@ -35,6 +36,11 @@ public sealed class CreateTransactionHandler
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
+        bool transactionExists = await transactionRepository.ExistsAsync(c => c.IdempotencyKey == command.IdempotencyKey);
+        if(transactionExists)
+        {
+            throw new IdempotencyKeyDuplicateException($"IdepotencyKey with {command.IdempotencyKey} already exists");
+        }
         var validation = validator.Validate(command);
 
         if(!validation.IsValid)
