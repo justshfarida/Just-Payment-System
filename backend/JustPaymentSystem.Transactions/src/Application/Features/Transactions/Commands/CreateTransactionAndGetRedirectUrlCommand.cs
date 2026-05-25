@@ -2,6 +2,7 @@
 using Application.Features.Transactions.Events;
 using Domain.Domains;
 using Domain.Events;
+using Wolverine;
 
 namespace Application.Features.Transactions.Commands;
 
@@ -12,7 +13,7 @@ namespace Application.Features.Transactions.Commands;
 // Transaction service checks data and signature and updates if payment is succesfull and adds payment snapshot 
 // Webhook service send http request to callback endpoint of client with data and signature
 // Client callback can send Ok which means state changed and BadRequest for refund
-public sealed record CreateTransactionCommand(
+public sealed record CreateTransactionAndGetRedirectUrlCommand(
     string MerchantId,
     string IdempotencyKey,
     decimal Amount,
@@ -24,12 +25,13 @@ public sealed record CreateTransactionCommand(
     string[] OtherAttr
     );
 
-public sealed class CreateTransactionCommandHandler
+public sealed class CreateTransactionAndGetRedirectUrlHandler
 {
     public async Task Handle(
-        CreateTransactionCommand command,
+        CreateTransactionAndGetRedirectUrlCommand command,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
+        IMessageBus bus,
         CancellationToken cancellationToken)
     {
         // TODO: Need add validation !!!
@@ -44,6 +46,6 @@ public sealed class CreateTransactionCommandHandler
         transaction.AddAttributes(command.OtherAttr);
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
-        //return new(transaction.Id);
+
     }
 }

@@ -2,6 +2,4 @@
 
 namespace Domain.Events;
 
-public class TransactionCreated : IDomainEvent
-{
-}
+public record TransactionCreated(Guid TransactionId) : IDomainEvent;

@@ -9,7 +9,7 @@ public static class TransactionsEndpoints
     {
         public RouteGroupBuilder MapTransactions()
         {
-            route.MapPost("/transactions", async (CreateTransactionCommand command, IMessageBus bus) =>
+            route.MapPost("/transactions", async (CreateTransactionAndGetRedirectUrlCommand command, IMessageBus bus) =>
             {
                 await bus.InvokeAsync(command);
             });

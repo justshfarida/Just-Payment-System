@@ -1,10 +1,11 @@
 ﻿using Domain.Shared.Validations;
 using Domain.Shared.Enums;
 using Domain.Shared.Exceptions;
+using Domain.Events;
 
 namespace Domain.Domains;
 
-public class Transaction : Entity<Guid>
+public class Transaction : AggregateRoot<Guid>
 {
     private readonly List<TransactionAttribute> _attributes = new();
     internal Transaction() { }
@@ -110,7 +111,7 @@ public class Transaction : Entity<Guid>
 
         long feeAmount = (long)Math.Round((double)amount * 0.03, MidpointRounding.AwayFromZero);
 
-        return new Transaction(
+        var transaction = new Transaction(
             merchantId,
             amount,
             currency,
@@ -120,6 +121,9 @@ public class Transaction : Entity<Guid>
             null,
             orderId,
             idempotencyKey);
+
+        transaction.RaiseDomainEvent(new TransactionCreated(transaction.Id));
+        return transaction;
     }
     public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, PaymentType paymentType, string card, string orderId)
     {
@@ -134,7 +138,7 @@ public class Transaction : Entity<Guid>
 
         long feeAmount = (long)Math.Round((double)amount * 0.03, MidpointRounding.AwayFromZero);
 
-        return new Transaction(
+        var transaction = new Transaction(
             merchantId,
             amount,
             currency,
@@ -144,6 +148,9 @@ public class Transaction : Entity<Guid>
             PaymentSnapshot.Create(paymentType, card),
             orderId,
             idempotencyKey);
+
+        transaction.RaiseDomainEvent(new TransactionCreated(transaction.Id));
+        return transaction;
     }
 
 }
