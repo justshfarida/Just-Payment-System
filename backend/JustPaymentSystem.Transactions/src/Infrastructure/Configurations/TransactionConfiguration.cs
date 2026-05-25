@@ -25,6 +25,10 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(c => c.IdempotencyKey)
             .HasMaxLength(40);
 
+        builder
+            .HasIndex(c => c.IdempotencyKey)
+            .IsUnique();
+
         builder.HasMany(c => c.Attributes)
             .WithOne(c => c.Transaction)
             .OnDelete(DeleteBehavior.Cascade);
