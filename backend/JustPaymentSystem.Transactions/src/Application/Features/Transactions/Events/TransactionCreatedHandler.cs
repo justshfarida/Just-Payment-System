@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Domain.Events;
+﻿using Domain.Events;
+using Microsoft.Extensions.Logging;
 namespace Application.Features.Transactions.Events;
 
 public class TransactionCreatedHandler
@@ -10,3 +10,4 @@ public class TransactionCreatedHandler
         return Task.CompletedTask;
     }
 }
+

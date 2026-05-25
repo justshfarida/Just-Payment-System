@@ -8,7 +8,7 @@ public static class DecimalValidation
     {
         public void EnsureGreaterThan(decimal v)
         {
-            if(value < v)
+            if (value < v)
             {
                 throw new AmountBelowMinimumLimitException($"{value} cannot be less than {v}");
             }

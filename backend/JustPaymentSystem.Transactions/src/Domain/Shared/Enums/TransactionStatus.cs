@@ -2,9 +2,9 @@
 
 public enum TransactionStatus : byte
 {
-    PENDING = 1, 
-    AUTHORIZED, 
-    CAPTURED, 
-    FAILED, 
+    PENDING = 1,
+    AUTHORIZED,
+    CAPTURED,
+    FAILED,
     VOIDED
 }

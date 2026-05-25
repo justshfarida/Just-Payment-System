@@ -1,7 +1,5 @@
 ﻿using Application.Common.Interfaces;
-using Application.Features.Transactions.Events;
 using Domain.Domains;
-using Domain.Events;
 using Wolverine;
 
 namespace Application.Features.Transactions.Commands;

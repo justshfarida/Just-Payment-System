@@ -29,7 +29,7 @@ public class PaymentSnapshotTests
     public void Create_WithShortCardNumber_ShouldFallbackToGenericTokenMasking()
     {
         // Arrange
-        var shortCard = "12345"; 
+        var shortCard = "12345";
         var paymentType = PaymentType.CARD;
 
         // Act
@@ -57,7 +57,7 @@ public class PaymentSnapshotTests
     public void Create_WithShortBankIdentifier_ShouldReturnFourStars()
     {
         // Arrange
-        var shortIban = "AZ29"; 
+        var shortIban = "AZ29";
         var paymentType = PaymentType.BANK_TRANSFER;
 
         // Act
@@ -85,7 +85,7 @@ public class PaymentSnapshotTests
     public void Create_WithShortGenericToken_ShouldReturnFourStars()
     {
         // Arrange
-        var shortToken = "abc"; 
+        var shortToken = "abc";
         var unknownType = (PaymentType)99;
 
         // Act
@@ -104,6 +104,6 @@ public class PaymentSnapshotTests
         Action act = () => PaymentSnapshot.Create(PaymentType.CARD, invalidIdentifier!);
 
         // Assert
-        act.Should().Throw<ArgumentException>(); 
+        act.Should().Throw<ArgumentException>();
     }
 }

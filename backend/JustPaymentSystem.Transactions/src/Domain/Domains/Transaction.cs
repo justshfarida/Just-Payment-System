@@ -1,7 +1,7 @@
-﻿using Domain.Shared.Validations;
+﻿using Domain.Events;
 using Domain.Shared.Enums;
 using Domain.Shared.Exceptions;
-using Domain.Events;
+using Domain.Shared.Validations;
 
 namespace Domain.Domains;
 
@@ -55,9 +55,9 @@ public class Transaction : AggregateRoot<Guid>
 
     public void Capture()
     {
-        if(Status != TransactionStatus.PENDING && Status != TransactionStatus.AUTHORIZED)
+        if (Status != TransactionStatus.PENDING && Status != TransactionStatus.AUTHORIZED)
             throw new InvalidDomainStateException($"Cannot authorize transaction from state: {Status}");
-        
+
         Status = TransactionStatus.CAPTURED;
     }
 

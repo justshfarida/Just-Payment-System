@@ -15,7 +15,7 @@ public class PaymentSnapshot : Entity<Guid>
     internal PaymentSnapshot() { }
 
     public Guid TransactionId { get; init; }
-    public Transaction Transaction { get; set; } 
+    public Transaction Transaction { get; set; }
     public PaymentType Type { get; private set; }
     public string MaskedIdentifier { get; private set; } = null!;
 

@@ -15,7 +15,7 @@ public class TransactionTests
     [Fact]
     public void Create_WithValidParameters_ShouldInitializeTransactionCorrectly()
     {
-        long amount = 10000; 
+        long amount = 10000;
 
         var transaction = Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), amount, _validCurrency, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
@@ -29,11 +29,11 @@ public class TransactionTests
     }
 
     [Theory]
-    [InlineData(100, 3)]       
-    [InlineData(1000, 30)]     
-    [InlineData(50, 2)]        
-    [InlineData(115, 3)]       
-    [InlineData(117, 4)]       
+    [InlineData(100, 3)]
+    [InlineData(1000, 30)]
+    [InlineData(50, 2)]
+    [InlineData(115, 3)]
+    [InlineData(117, 4)]
     public void Create_ShouldCalculateFeeUsingSymmetricRounding(long amount, long expectedFee)
     {
         // Act
@@ -64,7 +64,7 @@ public class TransactionTests
         Action act = () => Transaction.Create(_validMerchantId, Guid.NewGuid().ToString(), 1000, invalidCurrency!, _validDescription, PaymentType.CARD, new string('0', 16), Guid.NewGuid().ToString());
 
         // Assert
-        act.Should().Throw<ArgumentException>(); 
+        act.Should().Throw<ArgumentException>();
     }
 
     [Fact]

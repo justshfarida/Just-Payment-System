@@ -6,7 +6,7 @@ public class TransactionAttribute : Entity<Guid>
 {
     private TransactionAttribute()
     {
-        
+
     }
 
     private TransactionAttribute(string value)

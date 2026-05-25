@@ -1,11 +1,8 @@
 using Api.Endpoints;
 using Api.Extensions;
 using Application;
-using Application.Features.Transactions.Queries;
-using Application.Features.Transactions.Queries.DTOs;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
 
-builder.Services.AddDbContext<TransactionDbContext>(op 
+builder.Services.AddDbContext<TransactionDbContext>(op
     => op.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.RegisterRepositories();

@@ -12,5 +12,5 @@ public class InvalidTransactionAmountException : Exception
     public long Amount { get; set; }
     public long MinimumRequired { get; set; }
     public string Currency { get; set; }
-    
+
 }

@@ -4,7 +4,7 @@ namespace Api.Extensions;
 
 public static class SwaggerExtensions
 {
-    
+
     extension(IServiceCollection services)
     {
         public IServiceCollection AddSwaggerWithAuth(IConfiguration configuration)

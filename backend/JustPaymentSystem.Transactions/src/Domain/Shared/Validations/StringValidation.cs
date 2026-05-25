@@ -6,7 +6,7 @@ public static class StringValidation
     {
         public void EnsureNotNull()
         {
-            if(value == null)
+            if (value == null)
             {
                 throw new ArgumentNullException();
             }
@@ -14,7 +14,7 @@ public static class StringValidation
 
         public void EnsureNotNullOrEmpty()
         {
-            if(string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentNullException();
             }

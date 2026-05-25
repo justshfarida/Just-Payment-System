@@ -9,7 +9,7 @@ public class AggregateRoot<T> : Entity<T>
 
     public void RaiseDomainEvent(IDomainEvent @event)
     {
-        _events.Add(@event);    
+        _events.Add(@event);
     }
 
     public void ClearDomainEvents() => _events.Clear();
