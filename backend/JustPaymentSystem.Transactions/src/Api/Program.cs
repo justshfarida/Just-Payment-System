@@ -1,7 +1,9 @@
 using Api.Endpoints;
 using Api.Extensions;
+using Api.Middlewares;
 using Application;
 using Infrastructure;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
 
@@ -17,6 +19,7 @@ builder.Services.AddControllers();
 builder.Services.RegisterServices();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
+builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
@@ -40,11 +43,24 @@ if (app.Environment.IsDevelopment())
         options.OAuthUsePkce();
     });
 }
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionHandler = context.RequestServices.GetRequiredService<IExceptionHandler>();
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
 
+        if (exception != null)
+        {
+            await exceptionHandler.TryHandleAsync(context, exception, context.RequestAborted);
+        }
+    });
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
+
 
 app.MapGroup("/transactions")
     .MapTransactions()
