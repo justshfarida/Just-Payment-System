@@ -3,7 +3,7 @@
 public class TransactionResponse
 {
     public Guid Id { get; set; }
-    public Guid MerchantId { get; set; }
+    public string MerchantId { get; set; }
     public long Amount { get; set; }
     public string Currency { get; set; } = null!;
     public long FeeAmount { get; set; }

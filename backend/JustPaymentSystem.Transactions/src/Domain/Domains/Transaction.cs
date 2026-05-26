@@ -11,7 +11,7 @@ public class Transaction : AggregateRoot<Guid>
     internal Transaction() { }
 
     private Transaction(
-        Guid merchantId,
+        string merchantId,
         long amount,
         string currency,
         long feeAmount,
@@ -33,7 +33,7 @@ public class Transaction : AggregateRoot<Guid>
         IdempotencyKey = ıdempotencyKey;
     }
 
-    public Guid MerchantId { get; private set; }
+    public string MerchantId { get; private set; }
     public string IdempotencyKey { get; set; } = null!;
     public long Amount { get; private set; }
     public string Currency { get; private set; } = null!;
@@ -98,7 +98,7 @@ public class Transaction : AggregateRoot<Guid>
         PaymentSnapshot = PaymentSnapshot.Create(paymentType, card);
     }
 
-    public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, string orderId)
+    public static Transaction Create(string merchantId, string idempotencyKey, long amount, string currency, string description, string orderId)
     {
         currency.EnsureNotNullOrEmpty();
         description.EnsureNotNull();
@@ -125,7 +125,7 @@ public class Transaction : AggregateRoot<Guid>
         transaction.RaiseDomainEvent(new TransactionCreated(transaction.Id));
         return transaction;
     }
-    public static Transaction Create(Guid merchantId, string idempotencyKey, long amount, string currency, string description, PaymentType paymentType, string card, string orderId)
+    public static Transaction Create(string merchantId, string idempotencyKey, long amount, string currency, string description, PaymentType paymentType, string card, string orderId)
     {
         currency.EnsureNotNullOrEmpty();
         description.EnsureNotNull();

@@ -1,5 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Domains;
+using Domain.Events;
+using FluentValidation;
 using Wolverine;
 
 namespace Application.Features.Transactions.Commands;
@@ -11,7 +14,7 @@ namespace Application.Features.Transactions.Commands;
 // Transaction service checks data and signature and updates if payment is succesfull and adds payment snapshot 
 // Webhook service send http request to callback endpoint of client with data and signature
 // Client callback can send Ok which means state changed and BadRequest for refund
-public sealed record CreateTransactionAndGetRedirectUrlCommand(
+public sealed record CreateTransactionCommand(
     string MerchantId,
     string IdempotencyKey,
     decimal Amount,
@@ -23,27 +26,40 @@ public sealed record CreateTransactionAndGetRedirectUrlCommand(
     string[] OtherAttr
     );
 
-public sealed class CreateTransactionAndGetRedirectUrlHandler
+public sealed class CreateTransactionHandler
 {
-    public async Task Handle(
-        CreateTransactionAndGetRedirectUrlCommand command,
+    public async Task<TransactionCreated> Handle(
+        CreateTransactionCommand command,
+        IValidator<CreateTransactionCommand> validator,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
         IMessageBus bus,
         CancellationToken cancellationToken)
     {
-        // TODO: Need add validation !!!
+        bool transactionExists = await transactionRepository.ExistsAsync(c => c.IdempotencyKey == command.IdempotencyKey);
+        if(transactionExists)
+        {
+            throw new IdempotencyKeyDuplicateException($"IdepotencyKey with {command.IdempotencyKey} already exists");
+        }
+        var validation = validator.Validate(command);
+
+        if(!validation.IsValid)
+        {
+            throw new ValidationException(validation.Errors);
+        }
 
         Transaction transaction = Transaction.Create(
-            Guid.Parse(command.MerchantId),
+            command.MerchantId,
             command.IdempotencyKey,
             (long)(command.Amount * 100),
             command.Currency,
             command.Description,
             command.OrderId);
+
         transaction.AddAttributes(command.OtherAttr);
+
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
-
+        return new TransactionCreated(transaction.Id);
     }
 }
