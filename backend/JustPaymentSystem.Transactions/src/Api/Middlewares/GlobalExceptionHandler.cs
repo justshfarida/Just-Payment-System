@@ -1,8 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
 using System.Text.Json;
 
 namespace Api.Middlewares;
@@ -33,8 +31,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             var errors = validationException.Errors
             .GroupBy(g => g.ErrorCode)
             .ToDictionary(
-                group => group.Key,                                       
-                group => group.Select(e => e.ErrorMessage).ToArray()      
+                group => group.Key,
+                group => group.Select(e => e.ErrorMessage).ToArray()
             );
 
             var problemDetails = new HttpValidationProblemDetails()

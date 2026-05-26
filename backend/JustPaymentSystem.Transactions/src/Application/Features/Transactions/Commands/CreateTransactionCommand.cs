@@ -37,7 +37,7 @@ public sealed class CreateTransactionHandler
         CancellationToken cancellationToken)
     {
         bool transactionExists = await transactionRepository.ExistsAsync(c => c.IdempotencyKey == command.IdempotencyKey);
-        if(transactionExists)
+        if (transactionExists)
         {
             throw new IdempotencyKeyDuplicateException($"IdempotencyKey with {command.IdempotencyKey} already exists");
         }
@@ -46,7 +46,7 @@ public sealed class CreateTransactionHandler
 
         var validation = validator.Validate(command);
 
-        if(!validation.IsValid)
+        if (!validation.IsValid)
         {
             throw new ValidationException(validation.Errors);
         }

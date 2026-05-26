@@ -1,6 +1,4 @@
-﻿using Domain.Shared.Enums;
-
-namespace Application.Features.Transactions.Queries.DTOs;
+﻿namespace Application.Features.Transactions.Queries.DTOs;
 
 public class TransactionResponse
 {

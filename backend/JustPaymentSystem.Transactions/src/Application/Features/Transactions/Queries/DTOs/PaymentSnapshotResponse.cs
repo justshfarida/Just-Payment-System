@@ -4,9 +4,9 @@ public class PaymentSnapshotResponse
 {
     public PaymentSnapshotResponse(Guid id, string type, string maskedIdentifier)
     {
+        Id = id;
         Type = type;
         MaskedIdentifier = maskedIdentifier;
-        Id = id;
     }
 
     public Guid Id { get; set; }

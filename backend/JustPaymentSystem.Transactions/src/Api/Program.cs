@@ -1,4 +1,3 @@
-using Api.Endpoints;
 using Api.Extensions;
 using Api.Middlewares;
 using Application;
@@ -60,11 +59,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
-
-
-app.MapGroup("/transactions")
-    .MapTransactions()
-    .WithTags("Transactions");
 
 app.MapControllers();
 

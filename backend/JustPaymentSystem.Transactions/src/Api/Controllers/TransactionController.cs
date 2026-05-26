@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Wolverine;
-using System.Text.Encodings;
-using System.Text;
+﻿using Application.Common.Models;
 using Application.Features.Transactions.Commands;
-using System.Text.Json;
-using Domain.Events;
-using Application.Features.Transactions.Queries.DTOs;
 using Application.Features.Transactions.Queries;
+using Application.Features.Transactions.Queries.DTOs;
+using Domain.Events;
+using Domain.Shared.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Wolverine;
 namespace Api.Controllers;
 
 [Route("api/[controller]")]
@@ -46,7 +46,7 @@ public class TransactionController : ControllerBase
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = res.TransactionId }, 
+                new { id = res.TransactionId },
                 res
             );
         }
@@ -60,14 +60,22 @@ public class TransactionController : ControllerBase
         }
     }
 
-    [HttpGet("{id:guid}")] 
+    [HttpGet]
+    public async Task<IActionResult> GetAll(int page, int pageSize, string? merchantId, string? currency, TransactionStatus status, CancellationToken cancellationToken =  default)
+    {
+        var query = new GetTransactionsQuery(page, pageSize, merchantId, currency, status);
+        var res = await _bus.InvokeAsync<PagedResponse<TransactionResponse>>(query, cancellationToken);
+        return Ok(res);
+    }
+   
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(id));
 
         if (transaction == null)
         {
-            return NotFound(); 
+            return NotFound();
         }
 
         return Ok(transaction);
