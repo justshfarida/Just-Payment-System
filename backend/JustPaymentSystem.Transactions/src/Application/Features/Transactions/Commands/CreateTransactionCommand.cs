@@ -28,7 +28,7 @@ public sealed record CreateTransactionCommand(
 
 public sealed class CreateTransactionHandler
 {
-    public async Task<TransactionCreated> Handle(
+    public async Task Handle(
         CreateTransactionCommand command,
         IValidator<CreateTransactionCommand> validator,
         ITransactionRepository transactionRepository,
@@ -63,6 +63,6 @@ public sealed class CreateTransactionHandler
 
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
-        return new TransactionCreated(transaction.Id);
+        //return new TransactionCreated(transaction.Id);
     }
 }

@@ -2,7 +2,6 @@
 using Application.Features.Transactions.Commands;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
-using Domain.Events;
 using Domain.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,7 +10,7 @@ using System.Text.Json;
 using Wolverine;
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class TransactionController : ControllerBase
 {
@@ -44,13 +43,9 @@ public class TransactionController : ControllerBase
                 return BadRequest("Payload could not be deserialized.");
             }
 
-            var res = await _bus.InvokeAsync<TransactionCreated>(command);
+            await _bus.InvokeAsync(command);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = res.TransactionId },
-                res
-            );
+            return Ok();
         }
         catch (FormatException)
         {
@@ -75,7 +70,6 @@ public class TransactionController : ControllerBase
         var res = await _bus.InvokeAsync<PagedResponse<TransactionResponse>>(query, cancellationToken);
         return Ok(res);
     }
-
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -89,8 +83,13 @@ public class TransactionController : ControllerBase
         return Ok(transaction);
     }
 
+
     private bool VerifySignature(string data, string signature)
     {
+        // TODO: Get shared_private_key from merchant service.
+        // Hash data
+        // Compare with given signature
+
         return true;
     }
 }
