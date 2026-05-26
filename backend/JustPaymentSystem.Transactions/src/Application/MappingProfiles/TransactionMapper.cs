@@ -17,6 +17,10 @@ public class TransactionMapper : ITransactionMapper
             Description = transaction.Description,
             MerchantId = transaction.MerchantId,
             Status = transaction.Status.ToString(),
+            PaymentSnapshot = transaction.PaymentSnapshot != null ? new PaymentSnapshotResponse(
+                transaction.PaymentSnapshot.Id,
+                transaction.PaymentSnapshot.Type.ToString(),
+                transaction.PaymentSnapshot.MaskedIdentifier) : null,
             CreatedAt = transaction.CreatedAt,
             UpdatedAt = transaction.UpdatedAt
         };

@@ -1,6 +1,8 @@
 ﻿using Application;
+using Application.Common;
 using Application.Common.Interfaces;
 using FluentValidation;
+using Infrastructure;
 using Infrastructure.Repositories;
 
 namespace Api.Extensions;
@@ -14,7 +16,7 @@ public static class ServiceExtension
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<ITransactionReadRepository, TransactionReadRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            services.AddSingleton<IPagedResponseFactory, PagedResponseFactory>();
             return services;
         }
 
