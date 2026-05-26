@@ -1,4 +1,6 @@
-﻿namespace Application.Features.Transactions.Queries.DTOs;
+﻿using Domain.Shared.Enums;
+
+namespace Application.Features.Transactions.Queries.DTOs;
 
 public class TransactionResponse
 {
@@ -9,6 +11,7 @@ public class TransactionResponse
     public long FeeAmount { get; set; }
     public string Status { get; set; }
     public string Description { get; set; } = string.Empty;
+    public PaymentSnapshotResponse? PaymentSnapshot { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

@@ -39,7 +39,7 @@ public sealed class CreateTransactionHandler
         bool transactionExists = await transactionRepository.ExistsAsync(c => c.IdempotencyKey == command.IdempotencyKey);
         if(transactionExists)
         {
-            throw new IdempotencyKeyDuplicateException($"IdepotencyKey with {command.IdempotencyKey} already exists");
+            throw new IdempotencyKeyDuplicateException($"IdempotencyKey with {command.IdempotencyKey} already exists");
         }
 
         // TODO: Validate merchantId
