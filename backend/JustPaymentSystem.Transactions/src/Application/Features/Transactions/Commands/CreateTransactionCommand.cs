@@ -41,6 +41,9 @@ public sealed class CreateTransactionHandler
         {
             throw new IdempotencyKeyDuplicateException($"IdepotencyKey with {command.IdempotencyKey} already exists");
         }
+
+        // TODO: Validate merchantId
+
         var validation = validator.Validate(command);
 
         if(!validation.IsValid)

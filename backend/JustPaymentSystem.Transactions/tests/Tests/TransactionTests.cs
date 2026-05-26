@@ -8,7 +8,7 @@ namespace Tests;
 
 public class TransactionTests
 {
-    private readonly Guid _validMerchantId = Guid.NewGuid();
+    private readonly string _validMerchantId = "merchantid_132132";
     private readonly string _validCurrency = "AZN";
     private readonly string _validDescription = "Order #10492";
 
