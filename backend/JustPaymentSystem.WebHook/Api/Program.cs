@@ -11,7 +11,7 @@ builder.Services.AddHttpClient();
 builder.Host.UseWolverine(opts =>
 {
     // Tell Wolverine where your RabbitMQ instance is running
-    opts.UseRabbitMq(new Uri("amqp://admin:admin123@localhost:5672"));
+    opts.UseRabbitMq(new Uri("amqp://admin:admin123@localhost:5672")).AutoProvision();
 
     // Listen to the specific queues coming from the Transactions Service
     opts.ListenToRabbitQueue("merchant-webhook-success-queue");
