@@ -1,9 +1,11 @@
 ﻿using Application;
 using Application.Common;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 
 namespace Api.Extensions;
 
@@ -13,6 +15,8 @@ public static class ServiceExtension
     {
         public IServiceCollection RegisterRepositories()
         {
+            services.AddMemoryCache();
+            services.AddSingleton<ICacheService, MemoryCacheService>(); // Need change lifetime to Scoped for Redis!!!!!
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<ITransactionReadRepository, TransactionReadRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

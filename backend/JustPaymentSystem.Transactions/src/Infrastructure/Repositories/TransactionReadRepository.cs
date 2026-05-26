@@ -39,9 +39,10 @@ public class TransactionReadRepository : ITransactionReadRepository
     public Task<TransactionResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return _db.Transactions
+            .Where(c => c.Id == id)
             .Include(c => c.PaymentSnapshot)
             .AsNoTracking()
             .Select(c => _mapper.Map(c))
-            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

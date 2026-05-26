@@ -1,9 +1,11 @@
-﻿using Application.Common.Models;
+﻿using Application.Common.Interfaces.Services;
+using Application.Common.Models;
 using Application.Features.Transactions.Commands;
+using Application.Features.Transactions.Commands.DTOs;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
-using Domain.Events;
 using Domain.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
@@ -11,15 +13,17 @@ using System.Text.Json;
 using Wolverine;
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/")]
 [ApiController]
 public class TransactionController : ControllerBase
 {
     private readonly IMessageBus _bus;
+    private readonly ICacheService _cacheService;
 
-    public TransactionController(IMessageBus bus)
+    public TransactionController(IMessageBus bus, ICacheService cacheService)
     {
         _bus = bus;
+        _cacheService = cacheService;
     }
 
     [HttpPost]
@@ -44,13 +48,9 @@ public class TransactionController : ControllerBase
                 return BadRequest("Payload could not be deserialized.");
             }
 
-            var res = await _bus.InvokeAsync<TransactionCreated>(command);
+            var redirectUrl = await _bus.InvokeAsync<PaymentPageRedirectUrl>(command);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = res.TransactionId },
-                res
-            );
+            return Ok(redirectUrl);
         }
         catch (FormatException)
         {
@@ -76,7 +76,8 @@ public class TransactionController : ControllerBase
         return Ok(res);
     }
 
-    [HttpGet("{id:guid}")]
+    [Authorize]
+    [HttpGet("by-id/{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(id));
@@ -89,8 +90,38 @@ public class TransactionController : ControllerBase
         return Ok(transaction);
     }
 
+    [HttpGet("{token}")]
+    public async Task<IActionResult> GetByToken(string token)
+    {
+        TransactionSession? session = await _cacheService.GetAsync<TransactionSession>(token);
+        if(session == null)
+        {
+            return NotFound();
+        }
+
+        if(session.CreatedAt.AddMinutes(5) < DateTime.UtcNow)
+        {
+            return BadRequest(new { Message = "Session is expired" });
+        }
+
+        TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(session.TransactionId));
+
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(transaction);
+    }
+
+
+
     private bool VerifySignature(string data, string signature)
     {
+        // TODO: Get shared_private_key from merchant service.
+        // Hash data
+        // Compare with given signature
+
         return true;
     }
 }

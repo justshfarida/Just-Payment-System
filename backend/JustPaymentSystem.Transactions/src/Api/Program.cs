@@ -1,6 +1,7 @@
 using Api.Extensions;
 using Api.Middlewares;
 using Application;
+using Application.Common.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<TransactionDbContext>(op
     => op.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddControllers();
+builder.Services.Configure<ClientOptions>(builder.Configuration.GetSection("Client"));
 builder.Services.RegisterServices();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
