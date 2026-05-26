@@ -1,23 +1,32 @@
+using Wolverine;
+using Wolverine.ErrorHandling;
+using Wolverine.RabbitMQ;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 1. Register HttpClient so our background handlers can send outbound HTTP POSTs
+builder.Services.AddHttpClient();
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// 2. Configure Wolverine to act as our asynchronous background worker
+builder.Host.UseWolverine(opts =>
+{
+    // Tell Wolverine where your RabbitMQ instance is running
+    opts.UseRabbitMq(new Uri("amqp://admin:admin123@localhost:5672"));
+
+    // Listen to the specific queues coming from the Transactions Service
+    opts.ListenToRabbitQueue("merchant-webhook-success-queue");
+    opts.ListenToRabbitQueue("merchant-webhook-failure-queue");
+
+    // Resilience Policy: If an outbound HTTP call to a merchant fails (network dropout/timeout),
+    // retry 3 times with a progressive cooldown before giving up.
+    opts.Policies.OnException<HttpRequestException>()
+        .RetryWithCooldown(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30));
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+// We keep the app minimal because it mostly runs background tasks, 
+// but a basic health check endpoint lets you know the service is alive.
+app.MapGet("/", () => "Webhook Service is processing messages...");
 
 app.Run();

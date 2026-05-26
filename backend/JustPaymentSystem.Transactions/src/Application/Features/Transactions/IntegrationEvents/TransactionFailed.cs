@@ -2,7 +2,7 @@
 using Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Features.Transactions.IngtegrationEvents;
+namespace Application.Features.Transactions.IntegrationEvents;
 
 public record TransactionFailed(Guid TransactionId);
 
