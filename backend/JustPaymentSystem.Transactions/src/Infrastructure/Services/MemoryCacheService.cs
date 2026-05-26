@@ -1,4 +1,7 @@
-﻿namespace Infrastructure.Services;
+﻿using Application.Common.Interfaces.Services;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace Infrastructure.Services;
 
 public class MemoryCacheService : ICacheService
 {

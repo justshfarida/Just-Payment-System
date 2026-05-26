@@ -1,9 +1,11 @@
-﻿using Application.Common.Models;
+﻿using Application.Common.Interfaces.Services;
+using Application.Common.Models;
 using Application.Features.Transactions.Commands;
 using Application.Features.Transactions.Commands.DTOs;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
 using Domain.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
@@ -16,10 +18,12 @@ namespace Api.Controllers;
 public class TransactionController : ControllerBase
 {
     private readonly IMessageBus _bus;
+    private readonly ICacheService _cacheService;
 
-    public TransactionController(IMessageBus bus)
+    public TransactionController(IMessageBus bus, ICacheService cacheService)
     {
         _bus = bus;
+        _cacheService = cacheService;
     }
 
     [HttpPost]
@@ -71,7 +75,9 @@ public class TransactionController : ControllerBase
         var res = await _bus.InvokeAsync<PagedResponse<TransactionResponse>>(query, cancellationToken);
         return Ok(res);
     }
-    [HttpGet("{id:guid}")]
+
+    [Authorize]
+    [HttpGet("by-id/{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(id));
@@ -83,6 +89,31 @@ public class TransactionController : ControllerBase
 
         return Ok(transaction);
     }
+
+    [HttpGet("{token}")]
+    public async Task<IActionResult> GetByToken(string token)
+    {
+        TransactionSession? session = await _cacheService.GetAsync<TransactionSession>(token);
+        if(session == null)
+        {
+            return NotFound();
+        }
+
+        if(session.CreatedAt.AddMinutes(5) < DateTime.UtcNow)
+        {
+            return BadRequest(new { Message = "Session is expired" });
+        }
+
+        TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(session.TransactionId));
+
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(transaction);
+    }
+
 
 
     private bool VerifySignature(string data, string signature)

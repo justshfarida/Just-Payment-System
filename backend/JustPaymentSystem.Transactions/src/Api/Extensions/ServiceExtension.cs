@@ -15,7 +15,7 @@ public static class ServiceExtension
     {
         public IServiceCollection RegisterRepositories()
         {
-            services.AddMemoryCache()
+            services.AddMemoryCache();
             services.AddSingleton<ICacheService, MemoryCacheService>(); // Need change lifetime to Scoped for Redis!!!!!
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<ITransactionReadRepository, TransactionReadRepository>();

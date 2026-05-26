@@ -4,10 +4,8 @@ using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using Application.Features.Transactions.Commands.DTOs;
 using Domain.Domains;
-using Domain.Events;
 using FluentValidation;
 using Microsoft.Extensions.Options;
-using Wolverine;
 
 namespace Application.Features.Transactions.Commands;
 
