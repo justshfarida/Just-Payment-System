@@ -5,6 +5,8 @@ using Application.Features.Transactions.Queries.DTOs;
 using Domain.Events;
 using Domain.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Wolverine;
 namespace Api.Controllers;
@@ -61,13 +63,19 @@ public class TransactionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(int page, int pageSize, string? merchantId, string? currency, TransactionStatus status, CancellationToken cancellationToken =  default)
+    public async Task<IActionResult> GetAll(
+        [BindRequired][Range(1, int.MaxValue)] int page,
+        [BindRequired][Range(1, 50)] int pageSize,
+        string? merchantId,
+        string? currency,
+        TransactionStatus? status,
+        CancellationToken cancellationToken = default)
     {
         var query = new GetTransactionsQuery(page, pageSize, merchantId, currency, status);
         var res = await _bus.InvokeAsync<PagedResponse<TransactionResponse>>(query, cancellationToken);
         return Ok(res);
     }
-   
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {

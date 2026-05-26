@@ -20,8 +20,9 @@ public class TransactionReadRepository : ITransactionReadRepository
         _pagedResponseFactory = pagedResponseFactory;
     }
 
-    public Task<PagedResponse<TransactionResponse>> GetAllWithPaginationAsync(int page, int pageSize, string? merchantId, string? currency, TransactionStatus? status, CancellationToken cancellationToken = default)
+    public async Task<PagedResponse<TransactionResponse>> GetAllWithPaginationAsync(int page, int pageSize, string? merchantId, string? currency, TransactionStatus? status, CancellationToken cancellationToken = default)
     {
+
         var transactions = _db.Transactions
             .Include(c => c.PaymentSnapshot)
             .Where(c => merchantId == null || c.MerchantId == merchantId)
@@ -31,7 +32,7 @@ public class TransactionReadRepository : ITransactionReadRepository
                 .ThenByDescending(c => c.UpdatedAt)
             .AsNoTracking()
             .Select(c => _mapper.Map(c));
-        var pagedResponse = _pagedResponseFactory.Create<TransactionResponse>(transactions, page, pageSize);
+        var pagedResponse = await _pagedResponseFactory.Create(transactions, page, pageSize);
         return pagedResponse;
     }
 
