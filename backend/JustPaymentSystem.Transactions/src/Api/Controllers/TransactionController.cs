@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.Features.Transactions.Commands;
+using Application.Features.Transactions.Commands.DTOs;
 using Application.Features.Transactions.Queries;
 using Application.Features.Transactions.Queries.DTOs;
 using Domain.Shared.Enums;
@@ -43,9 +44,9 @@ public class TransactionController : ControllerBase
                 return BadRequest("Payload could not be deserialized.");
             }
 
-            await _bus.InvokeAsync(command);
+            var redirectUrl = await _bus.InvokeAsync<PaymentPageRedirectUrl>(command);
 
-            return Ok();
+            return Ok(redirectUrl);
         }
         catch (FormatException)
         {

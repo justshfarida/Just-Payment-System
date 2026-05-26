@@ -1,8 +1,12 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services;
+using Application.Common.Models;
+using Application.Features.Transactions.Commands.DTOs;
 using Domain.Domains;
 using Domain.Events;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 using Wolverine;
 
 namespace Application.Features.Transactions.Commands;
@@ -28,12 +32,13 @@ public sealed record CreateTransactionCommand(
 
 public sealed class CreateTransactionHandler
 {
-    public async Task Handle(
+    public async Task<PaymentPageRedirectUrl> Handle(
         CreateTransactionCommand command,
         IValidator<CreateTransactionCommand> validator,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
-        IMessageBus bus,
+        ICacheService cacheService,
+        IOptions<ClientOptions> clientOp,
         CancellationToken cancellationToken)
     {
         bool transactionExists = await transactionRepository.ExistsAsync(c => c.IdempotencyKey == command.IdempotencyKey);
@@ -63,6 +68,16 @@ public sealed class CreateTransactionHandler
 
         await transactionRepository.InsertAsync(transaction, cancellationToken);
         await unitOfWork.SaveAsync(cancellationToken);
+
+        string token = $"txtn_{Guid.NewGuid():N}";
+
+        await cacheService.SetAsync(
+            token,
+            new TransactionSession(transaction.Id, transaction.CreatedAt),
+            TimeSpan.FromMinutes(5));
+
+        string redirectUrl = $"{clientOp.Value.Url}/pay/{token}";
+        return new PaymentPageRedirectUrl(redirectUrl);
         //return new TransactionCreated(transaction.Id);
     }
 }
