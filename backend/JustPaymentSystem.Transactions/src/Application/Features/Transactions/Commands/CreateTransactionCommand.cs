@@ -69,9 +69,12 @@ public sealed class CreateTransactionHandler
 
         string token = $"txtn_{Guid.NewGuid():N}";
 
+        string successUrl = command.SuccessRedirectUrl ?? $"{clientOp.Value.Url}/"; // Need make it api call to mercahant to get success reidrect url
+        string errorUrl = command.ErrorRedirectUrl ?? $"{clientOp.Value.Url}/";
+
         await cacheService.SetAsync(
             token,
-            new TransactionSession(transaction.Id, transaction.CreatedAt),
+            new TransactionSession(transaction.Id, successUrl, errorUrl, transaction.CreatedAt),
             TimeSpan.FromMinutes(5));
 
         string redirectUrl = $"{clientOp.Value.Url}/pay/{token}";
