@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Services;
 using Application.Features.Transactions.Commands.DTOs;
+using Application.Features.Transactions.IntegrationEvents;
 using Domain.Domains;
 using Domain.Shared.Enums;
 
@@ -14,7 +15,7 @@ public record PayCommand(
 
 public class PayCommandHandler
 {
-    public async Task Handle(PayCommand command,
+    public async Task<TransactionCompletedIntegrationEvent> Handle(PayCommand command,
         ITransactionRepository transactionRepository,
         ICacheService cacheService,
         IUnitOfWork unitOfWork,
@@ -47,5 +48,16 @@ public class PayCommandHandler
         transaction.Capture();
 
         await unitOfWork.SaveAsync(cancellationToken);
+
+        return new TransactionCompletedIntegrationEvent(
+            transaction.Id,  
+            transaction.MerchantId,
+            transaction.OrderId,
+            transaction.Amount,
+            transaction.Currency,
+            session.SuccessUrl,
+            session.ErrorUrl,
+            DateTime.UtcNow
+        );
     }
 }
