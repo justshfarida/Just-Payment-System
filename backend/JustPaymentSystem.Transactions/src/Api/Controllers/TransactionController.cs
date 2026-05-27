@@ -104,14 +104,15 @@ public class TransactionController : ControllerBase
             return BadRequest(new { Message = "Session is expired" });
         }
 
-        TransactionResponse transaction = await _bus.InvokeAsync<TransactionResponse>(new GetTransactionByIdQuery(session.TransactionId));
+        return Ok(session);
+    }
 
-        if (transaction == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(transaction);
+    [HttpPost("{token}/pay")]
+    public async Task<IActionResult> Pay(string token)
+    {
+        // publish event that payment was succeed
+        // return user redirection to success 
+        return Ok();
     }
 
 
