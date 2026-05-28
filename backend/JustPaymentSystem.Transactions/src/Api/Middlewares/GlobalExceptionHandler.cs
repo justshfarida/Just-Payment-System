@@ -57,7 +57,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 : exception.Message
             }, cancellationToken);
         }
-        
+
 
         return true;
     }

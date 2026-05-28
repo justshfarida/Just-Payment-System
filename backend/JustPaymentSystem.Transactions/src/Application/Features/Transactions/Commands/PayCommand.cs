@@ -7,7 +7,6 @@ using Domain.Domains;
 using Domain.Shared.Enums;
 using Domain.Shared.Exceptions;
 using FluentValidation;
-using Spectre.Console;
 
 namespace Application.Features.Transactions.Commands;
 
@@ -27,7 +26,7 @@ public class PayCommandHandler
     {
         var validation = validator.Validate(command.PaymentRequest);
 
-        if(!validation.IsValid)
+        if (!validation.IsValid)
         {
             throw new ValidationException(validation.Errors);
         }
@@ -50,7 +49,7 @@ public class PayCommandHandler
                $"Transaction with id '{session.TransactionId}' was not found.");
         }
 
-        if(transaction.Status != TransactionStatus.PENDING)
+        if (transaction.Status != TransactionStatus.PENDING)
         {
             throw new InvalidDomainStateException($"Cannot proceed payment from state transaction: {transaction.Status}");
         }
@@ -72,7 +71,7 @@ public class PayCommandHandler
 
 
         return new TransactionCompletedIntegrationEvent(
-            transaction.Id,  
+            transaction.Id,
             transaction.MerchantId,
             transaction.OrderId,
             transaction.Amount,

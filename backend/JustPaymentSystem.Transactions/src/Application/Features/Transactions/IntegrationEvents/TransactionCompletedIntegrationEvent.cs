@@ -9,8 +9,8 @@ public record TransactionCompletedIntegrationEvent(
     string OrderId,
     decimal Amount,
     string Currency,
-    string SuccessRedirectUrl, 
-    string ErrorRedirectUrl,    
+    string SuccessRedirectUrl,
+    string ErrorRedirectUrl,
     DateTime Timestamp
 );
 

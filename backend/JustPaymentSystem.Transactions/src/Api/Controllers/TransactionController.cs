@@ -94,12 +94,12 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> GetByToken(string token)
     {
         TransactionSession? session = await _cacheService.GetAsync<TransactionSession>(token);
-        if(session == null)
+        if (session == null)
         {
             return NotFound();
         }
 
-        if(session.CreatedAt.AddMinutes(5) < DateTime.UtcNow)
+        if (session.CreatedAt.AddMinutes(5) < DateTime.UtcNow)
         {
             return BadRequest(new { Message = "Session is expired" });
         }

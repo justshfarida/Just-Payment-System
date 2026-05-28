@@ -26,7 +26,7 @@ public class PaymentRequestDtoValidator : AbstractValidator<PaymentRequest>
         RuleFor(x => x)
             .Must(BeAValidExpirationDate)
             .WithMessage("The credit card has expired.")
-            .WithName("ExpirationDate"); 
+            .WithName("ExpirationDate");
     }
 
     private bool BeAValidExpirationDate(PaymentRequest dto)
@@ -35,7 +35,7 @@ public class PaymentRequestDtoValidator : AbstractValidator<PaymentRequest>
         {
             return false;
         }
-        
+
         var lastDayOfExpirationMonth = new DateTime(dto.ExpirationYear, dto.ExpirationMonth, 1)
             .AddMonths(1)
             .AddDays(-1);

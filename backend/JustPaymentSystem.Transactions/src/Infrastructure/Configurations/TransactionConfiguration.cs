@@ -12,7 +12,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
 
         builder.HasOne(x => x.PaymentSnapshot)
          .WithOne(x => x.Transaction)
-         .HasForeignKey<PaymentSnapshot>(x => x.TransactionId)
+         .HasForeignKey<Transaction>(x => x.PaymentSnapshotId)
          .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(c => c.Currency)

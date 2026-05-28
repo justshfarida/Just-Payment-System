@@ -1,6 +1,5 @@
 ﻿using Application.Common.Interfaces;
 using Domain;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Wolverine;
 
