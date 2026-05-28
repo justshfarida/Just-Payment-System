@@ -2,10 +2,12 @@ using Api.Extensions;
 using Api.Middlewares;
 using Application;
 using Application.Common.Models;
+using Application.Features.Transactions.IntegrationEvents;
 using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
+using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,16 @@ builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
     opts.Discovery.IncludeAssembly(typeof(ApplicationAssembly).Assembly);
+    opts.UseRabbitMq(con =>
+    {
+        con.UserName = "admin";
+        con.Password = "admin123";
+    });
+
+    opts.PublishMessage<TransactionCompletedIntegrationEvent>()
+        .ToRabbitQueue("transaction-completed");
+
+
 });
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 

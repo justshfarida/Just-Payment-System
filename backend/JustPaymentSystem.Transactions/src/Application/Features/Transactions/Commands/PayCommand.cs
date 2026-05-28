@@ -50,7 +50,7 @@ public class PayCommandHandler
         transaction.SetPaymentSnapshot(command.PaymentRequest.CardNumber, PaymentType.CARD);
 
         // Here command makes request to bank
-        await Task.Delay(5000);
+        //await Task.Delay(5000);
 
         transaction.Capture();
 

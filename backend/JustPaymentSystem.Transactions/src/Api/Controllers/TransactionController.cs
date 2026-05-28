@@ -108,10 +108,10 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPost("{token}/pay")]
-    public async Task<IActionResult> Pay(string token)
+    public async Task<IActionResult> Pay(PaymentRequest request, string token)
     {
-        // publish event that payment was succeed
-        // return user redirection to success 
+        PayCommand command = new PayCommand(token, request);
+        await _bus.InvokeAsync(command);
         return Ok();
     }
 
