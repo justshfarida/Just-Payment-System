@@ -7,7 +7,6 @@ public class PaymentSnapshot : Entity<Guid>
 {
     private PaymentSnapshot(Guid transactionId, PaymentType type, string maskedIdentifier)
     {
-        Id = Guid.NewGuid();
         TransactionId = transactionId;
         Type = type;
         MaskedIdentifier = maskedIdentifier;

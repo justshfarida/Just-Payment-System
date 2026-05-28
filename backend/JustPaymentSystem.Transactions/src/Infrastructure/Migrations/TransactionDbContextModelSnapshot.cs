@@ -51,7 +51,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TransactionId")
                         .IsUnique();
 
-                    b.ToTable("PaymentSnapshots");
+                    b.ToTable("PaymentSnapshots", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Domains.Transaction", b =>
@@ -107,7 +107,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("IdempotencyKey")
                         .IsUnique();
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Domains.TransactionAttribute", b =>
@@ -133,7 +133,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("TransactionAttributes");
+                    b.ToTable("TransactionAttributes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Domains.PaymentSnapshot", b =>
