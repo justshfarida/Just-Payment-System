@@ -32,7 +32,7 @@ builder.Host.UseWolverine(opts =>
     {
         con.UserName = "admin";
         con.Password = "admin123";
-    });
+    }).AutoProvision();
 
     opts.PublishMessage<TransactionCompletedIntegrationEvent>()
         .ToRabbitQueue("transaction-completed");
