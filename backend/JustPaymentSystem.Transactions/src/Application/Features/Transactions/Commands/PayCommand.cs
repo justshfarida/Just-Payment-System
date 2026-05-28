@@ -5,6 +5,8 @@ using Application.Features.Transactions.Commands.DTOs;
 using Application.Features.Transactions.IntegrationEvents;
 using Domain.Domains;
 using Domain.Shared.Enums;
+using Domain.Shared.Exceptions;
+using Spectre.Console;
 
 namespace Application.Features.Transactions.Commands;
 
@@ -38,6 +40,11 @@ public class PayCommandHandler
         {
             throw new NotFoundException(
                $"Transaction with id '{session.TransactionId}' was not found.");
+        }
+
+        if(transaction.Status != TransactionStatus.PENDING)
+        {
+            throw new InvalidDomainStateException($"Cannot proceed payment from state transaction: {transaction.Status}");
         }
 
         transaction.SetPaymentSnapshot(command.PaymentRequest.CardNumber, PaymentType.CARD);
