@@ -40,20 +40,24 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 Title = "Validation Failed",
                 Status = StatusCodes.Status400BadRequest,
                 Detail = "One or more validation errors occurred.",
-                Instance = httpContext.Request.Path
+                Instance = httpContext.Request.Path,
+                Errors = errors
             };
 
-            var json = JsonSerializer.Serialize(problemDetails);
-            await httpContext.Response.WriteAsync(json);
-            return false;
+            await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
         }
-        await httpContext.Response.WriteAsJsonAsync(new
+
+        else
         {
-            message = showGenericMessage
+            await httpContext.Response.WriteAsJsonAsync(new
+            {
+                message = showGenericMessage
                 ? "The request payload is invalid or malformed."
                 : exception.Message
-        }, cancellationToken);
+            }, cancellationToken);
+        }
+        
 
         return true;
     }

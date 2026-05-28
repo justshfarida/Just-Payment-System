@@ -6,6 +6,7 @@ using Application.Features.Transactions.IntegrationEvents;
 using Domain.Domains;
 using Domain.Shared.Enums;
 using Domain.Shared.Exceptions;
+using FluentValidation;
 using Spectre.Console;
 
 namespace Application.Features.Transactions.Commands;
@@ -21,8 +22,15 @@ public class PayCommandHandler
         ITransactionRepository transactionRepository,
         ICacheService cacheService,
         IUnitOfWork unitOfWork,
+        IValidator<PaymentRequest> validator,
         CancellationToken cancellationToken)
     {
+        var validation = validator.Validate(command.PaymentRequest);
+
+        if(!validation.IsValid)
+        {
+            throw new ValidationException(validation.Errors);
+        }
         TransactionSession? session = await cacheService.GetAsync<TransactionSession>(command.Token);
         if (session is null)
         {
@@ -47,14 +55,21 @@ public class PayCommandHandler
             throw new InvalidDomainStateException($"Cannot proceed payment from state transaction: {transaction.Status}");
         }
 
-        transaction.SetPaymentSnapshot(command.PaymentRequest.CardNumber, PaymentType.CARD);
+        await Task.Delay(5000);
 
-        // Here command makes request to bank
-        //await Task.Delay(5000);
+        await unitOfWork.BeginTransactionAsync();
+        try
+        {
+            transaction.Capture();
+            transaction.SetPaymentSnapshot(command.PaymentRequest.CardNumber, PaymentType.CARD);
+            await unitOfWork.CommitTransactionAsync();
+        }
+        catch (Exception ex)
+        {
+            await unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
 
-        transaction.Capture();
-
-        await unitOfWork.SaveAsync(cancellationToken);
 
         return new TransactionCompletedIntegrationEvent(
             transaction.Id,  

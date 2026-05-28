@@ -45,17 +45,6 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.OAuthClientId(keycloakClientId);
-        options.OAuthUsePkce();
-    });
-}
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -69,6 +58,19 @@ app.UseExceptionHandler(errorApp =>
         }
     });
 });
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.OAuthClientId(keycloakClientId);
+        options.OAuthUsePkce();
+    });
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

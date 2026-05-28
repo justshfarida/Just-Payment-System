@@ -95,7 +95,7 @@ public class Transaction : AggregateRoot<Guid>
 
     public void SetPaymentSnapshot(string card, PaymentType paymentType)
     {
-        PaymentSnapshot = PaymentSnapshot.Create(paymentType, card);
+        PaymentSnapshot = PaymentSnapshot.Create(Id, paymentType, card);
     }
 
     public static Transaction Create(string merchantId, string idempotencyKey, long amount, string currency, string description, string orderId)
@@ -145,9 +145,11 @@ public class Transaction : AggregateRoot<Guid>
             feeAmount,
             TransactionStatus.PENDING,
             description,
-            PaymentSnapshot.Create(paymentType, card),
+            null,
             orderId,
             idempotencyKey);
+
+        transaction.SetPaymentSnapshot(card, paymentType);
 
         transaction.RaiseDomainEvent(new TransactionCreated(transaction.Id));
         return transaction;
