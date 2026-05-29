@@ -18,10 +18,10 @@ public class MerchantService : IMerchantService
 
         if (merchant?.Webhook == null) return null;
 
-        var isSubscribed = merchant.Webhook.WebhookEvents?
-            .Any(we => we.Event?.Name.Equals(eventType, StringComparison.OrdinalIgnoreCase) ?? false) ?? false;
+        //var isSubscribed = merchant.Webhook.WebhookEvents?
+        //    .Any(we => we.Event?.Name.Equals(eventType, StringComparison.OrdinalIgnoreCase) ?? false) ?? false;
 
-        if (!isSubscribed) return null;
+        //if (!isSubscribed) return null;
 
         return new WebhookSettingsResponseDto
         {

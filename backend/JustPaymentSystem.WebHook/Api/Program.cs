@@ -16,15 +16,17 @@ builder.Host.UseWolverine(opts =>
     opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
     opts.ListenToRabbitQueue("transaction-completed")
-    .UseForReplies()
-    .DefaultIncomingMessage<TransactionCompletedIntegrationEvent>();;
+    .DefaultIncomingMessage<TransactionCompletedIntegrationEvent>()
+    .ConfigureQueue(queue =>
+    {
+        queue.AutoDelete = true;
+        queue.IsDurable = false;
+    }); 
+
     opts.ListenToRabbitQueue("transaction-failed"); 
     opts.PublishMessage<CallbackFailedIntegrationEvent>()
         .ToRabbitQueue("callback-failed");
-    // Resilience Policy: If an outbound HTTP call to a merchant fails (network dropout/timeout),
-    // retry 3 times with a progressive cooldown before giving up.
-    opts.Policies.OnException<HttpRequestException>()
-        .RetryWithCooldown(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30));
+    
 });
 
 var app = builder.Build();

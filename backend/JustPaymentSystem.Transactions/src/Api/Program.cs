@@ -39,12 +39,7 @@ builder.Host.UseWolverine(opts =>
         .ToRabbitQueue("transaction-completed");
 
     opts.ListenToRabbitQueue("callback-failed")
-    .UseForReplies()
     .DefaultIncomingMessage<CallbackFailedIntegrationEvent>();
-
-    opts.Policies.OnException<HttpRequestException>()
-       .RetryWithCooldown(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30));
-
 
 });
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());

@@ -28,7 +28,7 @@ const features = [
       <UContainer class="flex items-center justify-between py-4">
         <div class="flex items-center gap-2">
           <div class="size-3 rounded-full bg-primary"></div>
-          <span class="text-lg font-bold">MockPay</span>
+          <span class="text-lg font-bold">Just Payment System</span>
         </div>
 
         <div class="flex items-center gap-3">
