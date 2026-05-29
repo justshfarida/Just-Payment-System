@@ -1,4 +1,6 @@
 
+using Application.Interfaces;
+using Application.Services;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +20,8 @@ namespace Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IMerchantService, MerchantService>();
 
             var app = builder.Build();
 
