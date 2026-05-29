@@ -1,4 +1,26 @@
-<!-- pages/index.vue -->
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const features = [
+  {
+    title: 'Mock Transactions',
+    description: 'Simulate successful, failed, and pending payments instantly.',
+    icon: 'i-lucide-credit-card',
+  },
+  {
+    title: 'Webhook Testing',
+    description: 'Send fake callbacks and test your backend integrations safely.',
+    icon: 'i-lucide-webhook',
+  },
+  {
+    title: 'Developer First',
+    description: 'Simple APIs, clean documentation, and fast sandbox setup.',
+    icon: 'i-lucide-code-2',
+  },
+]
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-950 text-white">
     <!-- Navbar -->
@@ -12,7 +34,7 @@
         <div class="flex items-center gap-3">
           <UButton color="neutral" variant="ghost" label="Documentation" />
 
-          <UButton color="primary" label="Get Started" />
+          <UButton @click="router.push('/merchant')" color="primary" label="Get Started" />
         </div>
       </UContainer>
     </header>
@@ -44,7 +66,13 @@
           </p>
 
           <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <UButton size="xl" color="primary" icon="i-lucide-play" label="Start Testing" />
+            <UButton
+              @click="router.push('/merchant')"
+              size="xl"
+              color="primary"
+              icon="i-lucide-play"
+              label="Start Testing"
+            />
 
             <UButton
               size="xl"
@@ -130,23 +158,3 @@
     </footer>
   </div>
 </template>
-
-<script setup lang="ts">
-const features = [
-  {
-    title: 'Mock Transactions',
-    description: 'Simulate successful, failed, and pending payments instantly.',
-    icon: 'i-lucide-credit-card',
-  },
-  {
-    title: 'Webhook Testing',
-    description: 'Send fake callbacks and test your backend integrations safely.',
-    icon: 'i-lucide-webhook',
-  },
-  {
-    title: 'Developer First',
-    description: 'Simple APIs, clean documentation, and fast sandbox setup.',
-    icon: 'i-lucide-code-2',
-  },
-]
-</script>

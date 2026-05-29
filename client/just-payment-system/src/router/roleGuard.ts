@@ -1,29 +1,26 @@
 import { useUserStore } from '@/stores/UserStore'
-import router from './index'
+import type { Router } from 'vue-router'
 
-router.beforeEach(async (to) => {
-  const auth = useUserStore()
+export async function setUpAuthGuard(router: Router) {
+  router.beforeEach(async (to) => {
+    const auth = useUserStore()
 
-  // wait auth initialization
-  if (!auth.initialized) {
-    await auth.init()
-  }
+    const requiresAuth = to.meta.requiresAuth
+    const allowedRoles = to.meta.roles as string[] | undefined
 
-  const requiresAuth = to.meta.requiresAuth
-  const allowedRoles = to.meta.roles as string[] | undefined
-
-  if (requiresAuth && !auth.authenticated) {
-    await auth.login()
-    return false
-  }
-
-  if (allowedRoles?.length) {
-    const hasAccess = allowedRoles.some((role) => auth.inRole(role))
-
-    if (!hasAccess) {
-      return '/unauthorized'
+    if (requiresAuth && !auth.authenticated) {
+      await auth.login()
+      return false
     }
-  }
 
-  return true
-})
+    if (allowedRoles?.length) {
+      const hasAccess = allowedRoles.some((role) => auth.inRole(role))
+
+      if (!hasAccess) {
+        return '/unauthorized'
+      }
+    }
+
+    return true
+  })
+}

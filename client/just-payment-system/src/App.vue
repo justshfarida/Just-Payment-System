@@ -24,9 +24,8 @@ onBeforeMount(async () => {
     <VueSpinner color="green" size="40"></VueSpinner>
   </div>
   <div v-else-if="userStore.authenticated">
-    <Default v-if="userStore.inRole('merchant')">
-      <RouterView></RouterView>
-    </Default>
+    <RouterView v-if="userStore.inRole('merchant')"></RouterView>
+
     <isnotmerchant v-else></isnotmerchant>
   </div>
   <div v-else>
