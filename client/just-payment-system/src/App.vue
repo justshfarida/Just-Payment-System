@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import Default from './layout/default.vue'
 import isnotmerchant from './layout/isnotmerchant.vue'
 import notauthenticated from './layout/notauthenticated.vue'
 import { useUserStore } from './stores/UserStore'
@@ -8,15 +7,6 @@ import { VueSpinner } from 'vue3-spinners'
 
 const userStore = useUserStore()
 const isLoading = ref(false)
-onBeforeMount(async () => {
-  isLoading.value = true
-  try {
-    await userStore.init()
-    console.log(userStore.user)
-  } finally {
-    isLoading.value = false
-  }
-})
 </script>
 
 <template>

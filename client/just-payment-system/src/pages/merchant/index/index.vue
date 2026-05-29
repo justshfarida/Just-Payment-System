@@ -92,7 +92,7 @@ const formattedRevenue = computed(() => {
         <template #icon>
           <UIcon
             name="i-heroicons-credit-card"
-            class="w-5 h-5 text-neutral-600 dark:text-neutral-400"
+            class="w-5 h-5 text-primary-600 dark:text-primary-400"
           />
         </template>
       </StatCard>

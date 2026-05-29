@@ -9,23 +9,20 @@ const logout = async () => {
 </script>
 
 <template>
-  <UUser
-    v-if="userStore.authenticated"
-    :name="userStore.user?.name"
-    :description="userStore.user?.email"
-    :avatar="{
-      icon: 'i-uil-user',
-    }"
-  >
-    <template #avatar>
-      <UPopover>
-        <UIcon name="i-uil-user" class="size-5"></UIcon>
-        <template #content>
-          <div class="p-1">
-            <UButton @click="logout()" color="neutral" variant="outline">Logout</UButton>
-          </div>
-        </template>
-      </UPopover>
+  <UPopover v-if="userStore.authenticated">
+    <UUser
+      :name="userStore.user?.name"
+      :description="userStore.user?.email"
+      :avatar="{ icon: 'i-uil-user' }"
+      class="cursor-pointer"
+    />
+
+    <template #content>
+      <div class="p-2">
+        <UButton @click="logout()" color="neutral" variant="outline" icon="i-uil-sign-out-alt">
+          Logout
+        </UButton>
+      </div>
     </template>
-  </UUser>
+  </UPopover>
 </template>

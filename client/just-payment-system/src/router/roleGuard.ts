@@ -7,10 +7,12 @@ export async function setUpAuthGuard(router: Router) {
 
     const requiresAuth = to.meta.requiresAuth
     const allowedRoles = to.meta.roles as string[] | undefined
-
+    if (!auth.initialized) {
+      await auth.init()
+    }
     if (requiresAuth && !auth.authenticated) {
       await auth.login()
-      return false
+      return '/'
     }
 
     if (allowedRoles?.length) {

@@ -82,3 +82,12 @@ const logout = () => {
     <RouterView></RouterView>
   </UDashboardGroup>
 </template>
+
+<route lang="json">
+{
+  "meta": {
+    "requiresAuth": true,
+    "roles": ["merchant"]
+  }
+}
+</route>
