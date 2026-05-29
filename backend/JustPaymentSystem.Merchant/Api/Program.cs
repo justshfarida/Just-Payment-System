@@ -20,7 +20,7 @@ namespace Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddScoped<IMerchantRepository,  MerchantRepository>();
             builder.Services.AddScoped<IMerchantService, MerchantService>();
 
             var app = builder.Build();

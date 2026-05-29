@@ -26,8 +26,7 @@ public class TransactionWebhookHandlers
 
         // 1. Fetch Webhook URL and SecretKey dynamically from the Merchant Service
         // Note: Adjust the port and base address to match your Merchant API gateway routing profile
-        var merchantSettingsUrl = $"http://localhost:5001/api/merchants/{message.MerchantId}/webhooks?eventType={eventTypeName}";
-
+        var merchantSettingsUrl = $"http://localhost:5019/api/merchants/{message.MerchantId}/webhooks?eventType={eventTypeName}";
         var settingsResponse = await _httpClient.GetFromJsonAsync<MerchantWebhookSettingsDto>(merchantSettingsUrl);
 
         if (settingsResponse == null || string.IsNullOrEmpty(settingsResponse.WebhookUrl))
