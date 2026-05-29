@@ -73,7 +73,6 @@ public class TransactionCompletedIntegrationEventHandler
 
             if (!response.IsSuccessStatusCode)
             {
-                await _bus.PublishAsync<CallbackFailedIntegrationEvent>(new(webhookPayload.transactionId));
                 throw new HttpRequestException($"External Merchant API rejected webhook with status code: {response.StatusCode}");
             }
 
