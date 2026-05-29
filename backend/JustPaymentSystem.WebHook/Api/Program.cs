@@ -15,19 +15,12 @@ builder.Host.UseWolverine(opts =>
     var rabbitMqUri = builder.Configuration["RabbitMq:Uri"];
     opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
-<<<<<<< HEAD
     opts.ListenToRabbitQueue("transaction-completed")
     .UseForReplies()
     .DefaultIncomingMessage<TransactionCompletedIntegrationEvent>();;
     opts.ListenToRabbitQueue("transaction-failed"); 
     opts.PublishMessage<CallbackFailedIntegrationEvent>()
         .ToRabbitQueue("callback-failed");
-=======
-    opts.ListenToRabbitQueue("transaction-completed");
-    opts.PublishMessage<WebhookCallbackFailedIntegrationEvent>()
-        .ToRabbitQueue("callback-failed");
-
->>>>>>> c8b79b38da5b12c73bedfb3465e2f0560e86fdf3
     // Resilience Policy: If an outbound HTTP call to a merchant fails (network dropout/timeout),
     // retry 3 times with a progressive cooldown before giving up.
     opts.Policies.OnException<HttpRequestException>()
