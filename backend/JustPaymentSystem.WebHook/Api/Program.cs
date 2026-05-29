@@ -1,3 +1,4 @@
+using Api.Events;
 using Wolverine;
 using Wolverine.ErrorHandling;
 using Wolverine.RabbitMQ;
@@ -15,7 +16,8 @@ builder.Host.UseWolverine(opts =>
     opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
     opts.ListenToRabbitQueue("transaction-completed");
-    opts.ListenToRabbitQueue("transaction-failed"); 
+    opts.PublishMessage<WebhookCallbackFailedIntegrationEvent>()
+        .ToRabbitQueue("callback-failed");
 
     // Resilience Policy: If an outbound HTTP call to a merchant fails (network dropout/timeout),
     // retry 3 times with a progressive cooldown before giving up.
