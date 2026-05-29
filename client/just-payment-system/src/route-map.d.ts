@@ -43,27 +43,44 @@ declare module 'vue-router/auto-routes' {
       '/merchant',
       Record<never, never>,
       Record<never, never>,
+      | '/merchant//'
+      | '/merchant//credentials'
+      | '/merchant//transactions'
+      | '/merchant//webhook'
+    >,
+    '/merchant//': RouteRecordInfo<
+      '/merchant//',
+      '/merchant',
+      Record<never, never>,
+      Record<never, never>,
       | never
     >,
-    '/merchant/credentials': RouteRecordInfo<
+    '/merchant//credentials': RouteRecordInfo<
+      '/merchant//credentials',
       '/merchant/credentials',
-      '/merchant/credentials',
       Record<never, never>,
       Record<never, never>,
       | never
     >,
-    '/merchant/transactions': RouteRecordInfo<
-      '/merchant/transactions',
+    '/merchant//transactions': RouteRecordInfo<
+      '/merchant//transactions',
       '/merchant/transactions',
       Record<never, never>,
       Record<never, never>,
       | never
     >,
-    '/merchant/webhook': RouteRecordInfo<
-      '/merchant/webhook',
+    '/merchant//webhook': RouteRecordInfo<
+      '/merchant//webhook',
       '/merchant/webhook',
       Record<never, never>,
       Record<never, never>,
+      | never
+    >,
+    '/pay/[token]': RouteRecordInfo<
+      '/pay/[token]',
+      '/pay/:token',
+      { token: ParamValue<true> },
+      { token: ParamValue<false> },
       | never
     >,
   }
@@ -88,24 +105,40 @@ declare module 'vue-router/auto-routes' {
     'src/pages/merchant/index.vue': {
       routes:
         | '/merchant/'
+        | '/merchant//'
+        | '/merchant//credentials'
+        | '/merchant//transactions'
+        | '/merchant//webhook'
+      views:
+        | 'default'
+    }
+    'src/pages/merchant/index/index.vue': {
+      routes:
+        | '/merchant//'
       views:
         | never
     }
-    'src/pages/merchant/credentials.vue': {
+    'src/pages/merchant/index/credentials.vue': {
       routes:
-        | '/merchant/credentials'
+        | '/merchant//credentials'
       views:
         | never
     }
-    'src/pages/merchant/transactions.vue': {
+    'src/pages/merchant/index/transactions.vue': {
       routes:
-        | '/merchant/transactions'
+        | '/merchant//transactions'
       views:
         | never
     }
-    'src/pages/merchant/webhook.vue': {
+    'src/pages/merchant/index/webhook.vue': {
       routes:
-        | '/merchant/webhook'
+        | '/merchant//webhook'
+      views:
+        | never
+    }
+    'src/pages/pay/[token].vue': {
+      routes:
+        | '/pay/[token]'
       views:
         | never
     }

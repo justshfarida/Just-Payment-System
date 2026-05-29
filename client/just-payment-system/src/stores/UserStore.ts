@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', () => {
   }
   async function init() {
     const isAuthenticated = await keycloak.init({
-      onLoad: 'login-required',
+      onLoad: 'check-sso',
       pkceMethod: 'S256',
       checkLoginIframe: false,
     })
