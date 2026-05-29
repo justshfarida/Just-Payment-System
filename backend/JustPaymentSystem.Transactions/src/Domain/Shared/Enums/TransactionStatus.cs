@@ -6,5 +6,6 @@ public enum TransactionStatus : byte
     AUTHORIZED,
     CAPTURED,
     FAILED,
-    VOIDED
+    VOIDED,
+    REFUNDED
 }

@@ -76,6 +76,13 @@ public class Transaction : AggregateRoot<Guid>
 
         Status = TransactionStatus.VOIDED;
     }
+    public void Refund()
+    {
+        if (Status != TransactionStatus.CAPTURED)
+            throw new InvalidDomainStateException($"Cannot refund transaction from state: {Status}");
+
+        Status = TransactionStatus.REFUNDED;
+    }
 
     public void AddAttribute(string attribute)
     {

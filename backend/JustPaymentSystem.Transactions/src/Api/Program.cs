@@ -7,6 +7,7 @@ using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
+using Wolverine.ErrorHandling;
 using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,13 @@ builder.Host.UseWolverine(opts =>
 
     opts.PublishMessage<TransactionCompletedIntegrationEvent>()
         .ToRabbitQueue("transaction-completed");
+
+    opts.ListenToRabbitQueue("callback-failed")
+    .UseForReplies()
+    .DefaultIncomingMessage<CallbackFailedIntegrationEvent>();
+
+    opts.Policies.OnException<HttpRequestException>()
+       .RetryWithCooldown(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(30));
 
 
 });

@@ -25,7 +25,8 @@ public class CallbackFailedIntegrationEventHandler
 
         // Event handler must call bank-provider to refund money 
         await Task.Delay(2000);
-        transaction.TransactionFailed();
+
+        transaction.Refund();
         await unitOfWork.SaveAsync(cancellationToken);
     }
 }
