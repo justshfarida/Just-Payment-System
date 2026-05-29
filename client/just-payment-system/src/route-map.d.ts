@@ -66,6 +66,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/pay/[token]': RouteRecordInfo<
+      '/pay/[token]',
+      '/pay/:token',
+      { token: ParamValue<true> },
+      { token: ParamValue<false> },
+      | never
+    >,
   }
 
   /**
@@ -106,6 +113,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/merchant/webhook.vue': {
       routes:
         | '/merchant/webhook'
+      views:
+        | never
+    }
+    'src/pages/pay/[token].vue': {
+      routes:
+        | '/pay/[token]'
       views:
         | never
     }
