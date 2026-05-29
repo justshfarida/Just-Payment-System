@@ -11,11 +11,11 @@ builder.Services.AddHttpClient();
 builder.Host.UseWolverine(opts =>
 {
     // Tell Wolverine where your RabbitMQ instance is running
-    opts.UseRabbitMq(new Uri("amqp://admin:admin123@localhost:5672")).AutoProvision();
+    var rabbitMqUri = builder.Configuration["RabbitMq:Uri"];
+    opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
-    // Listen to the specific queues coming from the Transactions Service
-    opts.ListenToRabbitQueue("merchant-webhook-success-queue");
-    opts.ListenToRabbitQueue("merchant-webhook-failure-queue");
+    opts.ListenToRabbitQueue("transaction-completed");
+    opts.ListenToRabbitQueue("transaction-failed"); 
 
     // Resilience Policy: If an outbound HTTP call to a merchant fails (network dropout/timeout),
     // retry 3 times with a progressive cooldown before giving up.
