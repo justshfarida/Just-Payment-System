@@ -3,22 +3,25 @@ using Api.Events;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Wolverine;
 
 namespace JustPaymentSystem.WebHook.Consumers;
 
-public class TransactionWebhookHandlers
+public class TransactionCompletedIntegrationEventHandler
 {
     private readonly HttpClient _httpClient;
-    private readonly ILogger<TransactionWebhookHandlers> _logger;
+    private readonly ILogger<TransactionCompletedIntegrationEventHandler> _logger;
+    private readonly IMessageBus _bus;
 
-    public TransactionWebhookHandlers(HttpClient httpClient, ILogger<TransactionWebhookHandlers> logger)
+    public TransactionCompletedIntegrationEventHandler(HttpClient httpClient, ILogger<TransactionCompletedIntegrationEventHandler> logger, IMessageBus bus)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _bus = bus;
     }
 
     // 1. THIS RUNS AUTOMATICALLY WHEN A SUCCESS MESSAGE ARRIVES
-    public async Task Handle(TransactionCompletedIntegrationEvent message)
+    public async Task Handle(Api.Events.TransactionCompletedIntegrationEvent message)
     {
         _logger.LogInformation("Starting webhook processing for Transaction: {TxId}", message.TransactionId);
 
@@ -28,7 +31,6 @@ public class TransactionWebhookHandlers
         // Note: Adjust the port and base address to match your Merchant API gateway routing profile
         var merchantSettingsUrl = $"http://localhost:5019/api/merchants/{message.MerchantId}/webhooks?eventType={eventTypeName}";
         var settingsResponse = await _httpClient.GetFromJsonAsync<MerchantWebhookSettingsDto>(merchantSettingsUrl);
-
         if (settingsResponse == null || string.IsNullOrEmpty(settingsResponse.WebhookUrl))
         {
             _logger.LogWarning("No active webhook configuration found for Merchant: {MerchantId}", message.MerchantId);
@@ -69,6 +71,7 @@ public class TransactionWebhookHandlers
 
         if (!response.IsSuccessStatusCode)
         {
+            await _bus.PublishAsync<CallbackFailedIntegrationEvent>(new(webhookPayload.transactionId));
             throw new HttpRequestException($"External Merchant API rejected webhook with status code: {response.StatusCode}");
         }
 
@@ -89,29 +92,5 @@ public class TransactionWebhookHandlers
         // Convert byte array to a lowercase hexadecimal string (industry standard format)
         return Convert.ToHexString(hashBytes).ToLower();
     }
-    // 2. THIS RUNS AUTOMATICALLY WHEN A FAILURE MESSAGE ARRIVES
-    public async Task Handle(TransactionFailedIntegrationEvent message)
-    {
-        _logger.LogWarning("Processing failure webhook for Transaction: {TxId}. Reason: {Reason}", message.TransactionId, message.Reason);
-
-        string merchantCallbackUrl = "https://mock-merchant-shop.com/api/payment-callback";
-
-        var webhookPayload = new
-        {
-            @event = "payment.failed",
-            transactionId = message.TransactionId,
-            orderId = message.OrderId,
-            failureReason = message.Reason,
-            timestamp = message.Timestamp
-        };
-
-        var response = await _httpClient.PostAsJsonAsync(merchantCallbackUrl, webhookPayload);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException($"Merchant returned failed status code on failure event: {response.StatusCode}");
-        }
-
-        _logger.LogInformation("Successfully delivered failure webhook for Transaction: {TxId}", message.TransactionId);
-    }
+    
 }
