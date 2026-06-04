@@ -20,7 +20,6 @@ builder.Host.UseWolverine(opts =>
     .ConfigureQueue(queue =>
     {
         queue.AutoDelete = true;
-        queue.IsDurable = false;
     }); 
 
     opts.ListenToRabbitQueue("transaction-failed"); 
