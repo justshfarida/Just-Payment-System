@@ -1,20 +1,5 @@
 <template>
   <div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-    <header class="mb-10">
-      <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
-        <span>Documentation</span>
-        <span>/</span>
-        <span class="text-primary-500 font-medium">Core Flows</span>
-      </div>
-      <h1 class="text-4xl font-bold text-gray-900 dark:text-white tracking-tight mb-4">
-        Payment & Webhook Lifecycle
-      </h1>
-      <p class="text-lg text-gray-600 dark:text-gray-300">
-        An overview of how transactions are initiated, processed, and synchronized across merchant
-        services using RabbitMQ and API Gateway.
-      </p>
-    </header>
-
     <UDivider class="my-8" />
 
     <section class="mb-12">
@@ -142,7 +127,7 @@
       <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
         State Reference Matrix
       </h2>
-      <UTable :rows="stateRows" :columns="stateColumns" />
+      <!-- <UTable :rows="stateRows" :columns="stateColumns" /> -->
     </section>
   </div>
 </template>

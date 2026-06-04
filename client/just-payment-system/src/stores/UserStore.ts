@@ -16,9 +16,6 @@ export const useUserStore = defineStore('user', () => {
     return user.value?.roles.includes(role) ?? false
   }
   async function init() {
-    setTimeout(() => {
-      console.log('check')
-    }, 500)
     const isAuthenticated = await keycloak.init({
       onLoad: 'check-sso',
       pkceMethod: 'S256',
