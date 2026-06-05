@@ -28,6 +28,8 @@ public sealed record CreateTransactionCommand(
     string[] OtherAttr
     );
 
+
+// Only merchant can access this !!!
 public sealed class CreateTransactionHandler
 {
     public async Task<PaymentPageRedirectUrl> Handle(
@@ -45,7 +47,6 @@ public sealed class CreateTransactionHandler
             throw new IdempotencyKeyDuplicateException($"IdempotencyKey with {command.IdempotencyKey} already exists");
         }
 
-        // TODO: Validate merchantId
 
         var validation = validator.Validate(command);
 

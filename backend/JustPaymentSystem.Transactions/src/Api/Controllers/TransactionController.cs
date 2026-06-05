@@ -19,11 +19,13 @@ public class TransactionController : ControllerBase
 {
     private readonly IMessageBus _bus;
     private readonly ICacheService _cacheService;
+    private readonly IMerchantServiceClient _merchantServiceClient;
 
-    public TransactionController(IMessageBus bus, ICacheService cacheService)
+    public TransactionController(IMessageBus bus, ICacheService cacheService, IMerchantServiceClient merchantServiceClient)
     {
         _bus = bus;
         _cacheService = cacheService;
+        _merchantServiceClient = merchantServiceClient;
     }
 
     [HttpPost]
