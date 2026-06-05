@@ -17,7 +17,7 @@ public class CallbackFailedIntegrationEventHandler
         CancellationToken cancellationToken)
     {
         Transaction? transaction = await transactionRepository.GetByIdAsync(@event.TransactionId, cancellationToken);
-        if(transaction == null)
+        if (transaction == null)
         {
             logger.LogCritical("Transaction from callback-failed event was not found");
             throw new NotFoundException($"Transaction with Id: {@event.TransactionId} was not found");

@@ -29,7 +29,7 @@ public class PayCommandHandler
 
         bool oneInFifty = random.Next(50) == 0;
 
-        if(oneInFifty)
+        if (oneInFifty)
         {
             throw new TransactionFailedException();
         }

@@ -7,7 +7,6 @@ using Infrastructure;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Wolverine;
-using Wolverine.ErrorHandling;
 using Wolverine.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +30,7 @@ builder.Services.AddHttpClient("merchant", client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 
     client.DefaultRequestHeaders.Add("Accept", "application/json");
-}); 
+});
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {

@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces.Services;
 using Application.DTOs;
 using System.Net.Http.Json;
-using Wolverine;
 
 namespace Infrastructure.Services;
 
