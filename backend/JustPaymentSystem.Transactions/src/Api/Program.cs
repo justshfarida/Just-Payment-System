@@ -25,6 +25,13 @@ builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
 builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient("merchant", client =>
+{
+    client.BaseAddress = new Uri("/api/merchants");
+    client.Timeout = TimeSpan.FromSeconds(30);
+
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+}); 
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
