@@ -62,6 +62,13 @@ public class TransactionController : ControllerBase
         }
     }
 
+    public async Task<IActionResult> GetStats(string merchantId)
+    {
+        var query = new GetTransactionStatsQuery(merchantId);
+        var res = await _bus.InvokeAsync<TransactionStatsResponse>(query);
+        return Ok(res);
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [BindRequired][Range(1, int.MaxValue)] int page,
