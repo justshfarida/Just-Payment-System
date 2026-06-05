@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Domain.Shared.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Text.Json;
@@ -18,6 +19,10 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
             ValidationException => StatusCodes.Status400BadRequest,
             JsonException => StatusCodes.Status400BadRequest,
             UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+            TransactionFailedException => StatusCodes.Status400BadRequest,
+            TransactionSessionExpiredException => StatusCodes.Status400BadRequest,
+            IdempotencyKeyDuplicateException => StatusCodes.Status404NotFound,
+            InvalidDomainStateException => StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
         };
 

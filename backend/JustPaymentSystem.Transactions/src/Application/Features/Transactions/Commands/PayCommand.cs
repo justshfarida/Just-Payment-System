@@ -24,6 +24,15 @@ public class PayCommandHandler
         IValidator<PaymentRequest> validator,
         CancellationToken cancellationToken)
     {
+        // 1/50 chance transaction to fail
+        var random = new Random();
+
+        bool oneInFifty = random.Next(50) == 0;
+
+        if(oneInFifty)
+        {
+            throw new TransactionFailedException();
+        }
         var validation = validator.Validate(command.PaymentRequest);
 
         if (!validation.IsValid)
@@ -53,8 +62,8 @@ public class PayCommandHandler
         {
             throw new InvalidDomainStateException($"Cannot proceed payment from state transaction: {transaction.Status}");
         }
-
-        await Task.Delay(5000);
+        // Simulate transaction request to bank
+        await Task.Delay(2000);
 
         await unitOfWork.BeginTransactionAsync();
         try

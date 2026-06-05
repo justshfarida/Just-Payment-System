@@ -79,6 +79,5 @@ public sealed class CreateTransactionHandler
 
         string redirectUrl = $"{clientOp.Value.Url}/pay/{token}";
         return new PaymentPageRedirectUrl(redirectUrl);
-        //return new TransactionCreated(transaction.Id);
     }
 }
