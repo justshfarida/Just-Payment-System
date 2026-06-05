@@ -16,7 +16,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.CARD;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(paymentType, card);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, paymentType, card);
 
         // Assert
         snapshot.Should().NotBeNull();
@@ -33,7 +33,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.CARD;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(paymentType, shortCard);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, paymentType, shortCard);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("***_2345");
@@ -47,7 +47,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.BANK_TRANSFER;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(paymentType, iban);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId,paymentType, iban);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("AZ29********6666");
@@ -61,7 +61,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.BANK_TRANSFER;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(paymentType, shortIban);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId,paymentType, shortIban);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("****");
@@ -75,7 +75,7 @@ public class PaymentSnapshotTests
         var unknownType = (PaymentType)99;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(unknownType, rawToken);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, unknownType, rawToken);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("***_1234");
@@ -89,7 +89,7 @@ public class PaymentSnapshotTests
         var unknownType = (PaymentType)99;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(unknownType, shortToken);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, unknownType, shortToken);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("****");
@@ -101,7 +101,7 @@ public class PaymentSnapshotTests
     public void Create_WithNullOrEmptyIdentifier_ShouldThrowException(string? invalidIdentifier)
     {
         // Act
-        Action act = () => PaymentSnapshot.Create(PaymentType.CARD, invalidIdentifier!);
+        Action act = () => PaymentSnapshot.Create(_validTransactionId, PaymentType.CARD, invalidIdentifier!);
 
         // Assert
         act.Should().Throw<ArgumentException>();
