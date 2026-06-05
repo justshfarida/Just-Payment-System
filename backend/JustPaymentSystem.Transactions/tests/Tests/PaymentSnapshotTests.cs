@@ -47,7 +47,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.BANK_TRANSFER;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(_validTransactionId,paymentType, iban);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, paymentType, iban);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("AZ29********6666");
@@ -61,7 +61,7 @@ public class PaymentSnapshotTests
         var paymentType = PaymentType.BANK_TRANSFER;
 
         // Act
-        var snapshot = PaymentSnapshot.Create(_validTransactionId,paymentType, shortIban);
+        var snapshot = PaymentSnapshot.Create(_validTransactionId, paymentType, shortIban);
 
         // Assert
         snapshot.MaskedIdentifier.Should().Be("****");

@@ -4,5 +4,5 @@ namespace Application.Common.Interfaces.Services;
 
 public interface IMerchantServiceClient
 {
-    Task<MerchantPrivateKeyDto> GetKeysAsync(string MerchantId);
+    Task<MerchantPrivateKeyDto> GetKeysAsync(string merchantId);
 }
