@@ -6,7 +6,7 @@ namespace Infrastructure.Services;
 
 public class MerchantServiceClient : IMerchantServiceClient
 {
-    private const string _clientName = "merchant";
+    private const string _clientName = "gateway";
     private readonly IHttpClientFactory _httpClientFactory;
 
     public MerchantServiceClient(IHttpClientFactory httpClientFactory)
@@ -17,7 +17,7 @@ public class MerchantServiceClient : IMerchantServiceClient
     public async Task<MerchantPrivateKeyDto> GetKeysAsync(string merchantId)
     {
         var httpClient = _httpClientFactory.CreateClient(_clientName);
-        var merchantSettingsUrl = $"{merchantId}/privatekey";
+        var merchantSettingsUrl = $"merchants/api/{merchantId}/privatekey";
         var settingsResponse = await httpClient.GetFromJsonAsync<MerchantPrivateKeyDto>(merchantSettingsUrl);
         if (settingsResponse == null || string.IsNullOrEmpty(settingsResponse.SecretKey))
         {

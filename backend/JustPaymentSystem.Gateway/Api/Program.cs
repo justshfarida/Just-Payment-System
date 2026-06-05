@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 var keycloakAuthority = builder.Configuration["Keycloak:Authority"]!;
 var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -81,19 +83,20 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
 
-app.MapGet("users/me", (ClaimsPrincipal user) =>
+
+
+app.MapReverseProxy(proxyPipeline =>
 {
-    return Results.Ok(new
+    proxyPipeline.Use(async (context, next) =>
     {
-        UserId = user.FindFirstValue(ClaimTypes.NameIdentifier),
-        Email = user.FindFirstValue(ClaimTypes.Email),
-        Name = user.FindFirstValue("preferred_username"),
-        Claims = user.Claims.Select(c => new { c.Type, c.Value })
-    });
-})
-.RequireAuthorization();
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Gateway received request for {Path}. Forwarding to cluster.", context.Request.Path);
 
+        await next();
+
+        logger.LogInformation("Gateway responding with status code {StatusCode}.", context.Response.StatusCode);
+    });
+});
 app.Run();
 

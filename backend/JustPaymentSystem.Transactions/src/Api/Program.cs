@@ -25,9 +25,9 @@ builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
 builder.Services.AddSingleton<IExceptionHandler, GlobalExceptionHandler>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHttpClient("merchant", client =>
+builder.Services.AddHttpClient("gateway", client =>
 {
-    client.BaseAddress = new Uri("/api/merchants");
+    client.BaseAddress = new Uri($"{builder.Configuration["ApiGateway:BaseAddress"]}");
     client.Timeout = TimeSpan.FromSeconds(30);
 
     client.DefaultRequestHeaders.Add("Accept", "application/json");

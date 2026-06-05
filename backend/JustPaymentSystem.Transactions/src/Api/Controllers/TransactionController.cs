@@ -28,6 +28,12 @@ public class TransactionController : ControllerBase
         _merchantServiceClient = merchantServiceClient;
     }
 
+    [HttpGet("test")]
+    public async Task<IActionResult> TestMerchant(string merchantId)
+    {
+        var res = await _merchantServiceClient.GetKeysAsync(merchantId);
+        return Ok(res);
+    }
     [HttpPost]
     public async Task<IActionResult> CreateTransaction([FromForm] string data, [FromForm] string signature)
     {
@@ -63,7 +69,7 @@ public class TransactionController : ControllerBase
             return BadRequest("Invalid JSON structure.");
         }
     }
-
+    [HttpGet("{merchantId}/stats")]
     public async Task<IActionResult> GetStats(string merchantId)
     {
         var query = new GetTransactionStatsQuery(merchantId);
