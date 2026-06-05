@@ -19,6 +19,7 @@ builder.Services.AddDbContext<TransactionDbContext>(op
 
 builder.Services.AddControllers();
 builder.Services.Configure<ClientOptions>(builder.Configuration.GetSection("Client"));
+builder.Services.Configure<ClientOptions>(builder.Configuration.GetSection("ApiGateway"));
 builder.Services.RegisterServices();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterMapper();
