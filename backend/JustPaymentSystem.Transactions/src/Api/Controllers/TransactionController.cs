@@ -13,7 +13,7 @@ using System.Text.Json;
 using Wolverine;
 namespace Api.Controllers;
 
-[Route("api/")]
+[Route("api/transactions")]
 [ApiController]
 public class TransactionController : ControllerBase
 {
