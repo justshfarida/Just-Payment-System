@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Security.Claims;
@@ -80,23 +81,21 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 
 
-
-app.MapReverseProxy(proxyPipeline =>
+app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    proxyPipeline.Use(async (context, next) =>
-    {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogInformation("Gateway received request for {Path}. Forwarding to cluster.", context.Request.Path);
-
-        await next();
-
-        logger.LogInformation("Gateway responding with status code {StatusCode}.", context.Response.StatusCode);
-    });
+    ForwardedHeaders =
+        ForwardedHeaders.XForwardedProto |
+        ForwardedHeaders.XForwardedHost |
+        ForwardedHeaders.XForwardedFor
 });
+
+app.MapReverseProxy();
 app.Run();
 

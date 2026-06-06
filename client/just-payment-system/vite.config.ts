@@ -16,6 +16,11 @@ export default defineConfig({
     vueDevTools(),
     ui(),
   ],
+  server: {
+    hmr: {
+      clientPort: 5173,
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
