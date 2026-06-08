@@ -20,12 +20,14 @@ public class TransactionController : ControllerBase
     private readonly IMessageBus _bus;
     private readonly ICacheService _cacheService;
     private readonly IMerchantServiceClient _merchantServiceClient;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public TransactionController(IMessageBus bus, ICacheService cacheService, IMerchantServiceClient merchantServiceClient)
+    public TransactionController(IMessageBus bus, ICacheService cacheService, IMerchantServiceClient merchantServiceClient, IHttpClientFactory httpClientFactory)
     {
         _bus = bus;
         _cacheService = cacheService;
         _merchantServiceClient = merchantServiceClient;
+        _httpClientFactory = httpClientFactory;
     }
 
     [HttpGet("test")]
@@ -37,7 +39,7 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTransaction([FromForm] string data, [FromForm] string signature)
     {
-        if (!string.IsNullOrEmpty(signature) && !VerifySignature(data, signature))
+        if (!string.IsNullOrEmpty(signature) || !VerifySignature(data, signature))
         {
             return Unauthorized("Invalid signature.");
         }
@@ -134,10 +136,8 @@ public class TransactionController : ControllerBase
 
     private bool VerifySignature(string data, string signature)
     {
-        // TODO: Get shared_private_key from merchant service.
-        // Hash data
-        // Compare with given signature
 
+        //SignatureHelpers.ComputeHmacSha256(data, );
         return true;
     }
 }
