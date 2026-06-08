@@ -36,11 +36,8 @@ builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Host.UseWolverine(opts =>
 {
     opts.Discovery.IncludeAssembly(typeof(ApplicationAssembly).Assembly);
-    opts.UseRabbitMq(con =>
-    {
-        con.UserName = "admin";
-        con.Password = "admin123";
-    }).AutoProvision();
+    var rabbitMqUri = builder.Configuration["RabbitMq:Uri"];
+    opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
     opts.PublishMessage<TransactionCompletedIntegrationEvent>()
         .ToRabbitQueue("transaction-completed");
