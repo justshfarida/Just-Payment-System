@@ -16,11 +16,7 @@ builder.Host.UseWolverine(opts =>
     opts.UseRabbitMq(new Uri(rabbitMqUri)).AutoProvision();
 
     opts.ListenToRabbitQueue("transaction-completed")
-    .DefaultIncomingMessage<TransactionCompletedIntegrationEvent>()
-    .ConfigureQueue(queue =>
-    {
-        queue.AutoDelete = true;
-    }); 
+    .DefaultIncomingMessage<TransactionCompletedIntegrationEvent>();
 
     opts.ListenToRabbitQueue("transaction-failed"); 
     opts.PublishMessage<CallbackFailedIntegrationEvent>()

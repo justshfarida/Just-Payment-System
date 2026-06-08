@@ -78,7 +78,7 @@ services:
       - Keycloak__MetadataAddress=http://keycloak:8080/realms/just-pay/.well-known/openid-configuration
 
       # Merchant Service
-      - ReverseProxy__Clusters__merchantCluster__Destinations__mercahntService__Address=http://merchant-service:8080/
+      - ReverseProxy__Clusters__merchantCluster__Destinations__mercahntService__Address=http://just-pay.merchant:5019/
 
       # Transaction Service
       - ReverseProxy__Clusters__transactionCluster__Destinations__transactionService__Address=http://just-pay.transaction:5153/
@@ -97,9 +97,9 @@ services:
     ports:
       - 5153:5153
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5153
-      - ConnectionStrings__Default=Host=postgres;Port=5432;Database=JustPay;Username=postgres;Password=postgres
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=transaction;Username=postgres;Password=postgres
 
       - Keycloak__Authority=http://keycloak:8080/realms/just-pay
       - Keycloak__ClientId=merchant-service
@@ -111,6 +111,37 @@ services:
 
       - Client__Url=http://just-pay.client:80
 
+      - RabbitMq__Uri=amqp://admin:admin123@rabbitmq:5672
+  merchant:
+    image: just-pay.merchant
+    container_name: just-pay.merchant
+    build:
+      context: ./backend/JustPaymentSystem.Merchant
+      dockerfile: Dockerfile
+    ports:
+      - 5019:5019
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5019
+      - ConnectionStrings__Default=Host=db;Port=5432;Database=merchant_management;Username=postgres;Password=postgres
+
+      - Keycloak__Authority=http://keycloak:8080/realms/just-pay
+      - Keycloak__ClientId=merchant-service
+      - Keycloak__Audience=account
+      - Keycloak__Issuer=http://keycloak:8080/realms/just-pay
+      - Keycloak__MetadataAddress=http://keycloak:8080/realms/just-pay/.well-known/openid-configuration
+
+  webhook:
+    image: just-pay.webhook
+    container_name: just-pay.webhook
+    build:
+      context: ./backend/JustPaymentSystem.WebHook
+      dockerfile: Dockerfile
+    ports:
+      - 5074:5074
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5074
       - RabbitMq__Uri=amqp://admin:admin123@rabbitmq:5672
   frontend:
     build:
