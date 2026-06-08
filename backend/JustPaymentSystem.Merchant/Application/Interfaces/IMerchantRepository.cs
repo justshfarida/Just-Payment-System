@@ -6,7 +6,7 @@ namespace Application.Interfaces
     public interface IMerchantRepository : IRepositoryBase<Merchant>
     {
         Task<Merchant?> GetWebhookSettingsAsync(Guid merchantId, string eventType);
-        Task AddMerchantAsync(Merchant merchant);
+        Task CreateMerchantAsync(Merchant merchant);
         Task SaveChangesAsync();
     }
 }

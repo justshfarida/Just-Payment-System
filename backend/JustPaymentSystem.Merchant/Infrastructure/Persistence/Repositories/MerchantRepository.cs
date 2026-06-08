@@ -23,8 +23,11 @@ public class MerchantRepository : RepositoryBase<Merchant>, IMerchantRepository
             .FirstOrDefaultAsync(m => m.Id == merchantId && m.Webhook != null && m.Webhook.IsActive);
     }
 
-    public async Task AddMerchantAsync(Merchant merchant)
+    public async Task CreateMerchantAsync(Merchant merchant)
     {
+        var type=_context.BusinessTypes.FirstOrDefault(b => b.Id == merchant.TypeId);
+        if(type == null) 
+            throw new Exception("Invalid business type ID.");
         await _context.Merchants.AddAsync(merchant);
     }
 

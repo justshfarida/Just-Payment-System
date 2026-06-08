@@ -59,6 +59,6 @@ public class MerchantService : IMerchantService
         }
 
         var merchant = _mapper.Map(request, userId);
-        await _repository.CreateAsync(merchant);
+        await _repository.CreateMerchantAsync(merchant);
     }
 }
