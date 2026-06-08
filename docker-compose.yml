@@ -87,7 +87,7 @@ services:
       - ReverseProxy__Clusters__keycloakCluster__Destinations__authService__Address=http://keycloak:8080/
 
       # Frontend
-      - ReverseProxy__Clusters__clientCluster__Destinations__clientService__Address=http://frontend:80/
+      - ReverseProxy__Clusters__clientCluster__Destinations__clientService__Address=http://just-pay.client:80
   transactions:
     image: just-pay.transaction
     container_name: just-pay.transaction
@@ -109,6 +109,14 @@ services:
 
       - ApiGateway__BaseAddress=http://just-pay.gateway:5055
 
-      - Client__Url=http://client:3000
+      - Client__Url=http://just-pay.client:80
 
       - RabbitMq__Uri=amqp://admin:admin123@rabbitmq:5672
+  frontend:
+    build:
+      context: ./client/just-payment-system
+      dockerfile: Dockerfile
+    container_name: just-pay.client
+    ports:
+      - "8081:80"
+    restart: unless-stopped
