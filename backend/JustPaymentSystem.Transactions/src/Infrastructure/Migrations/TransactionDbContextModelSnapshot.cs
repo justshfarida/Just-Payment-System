@@ -48,10 +48,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId")
-                        .IsUnique();
-
-                    b.ToTable("PaymentSnapshots", (string)null);
+                    b.ToTable("PaymentSnapshots");
                 });
 
             modelBuilder.Entity("Domain.Domains.Transaction", b =>
@@ -107,7 +104,10 @@ namespace Infrastructure.Migrations
                     b.HasIndex("IdempotencyKey")
                         .IsUnique();
 
-                    b.ToTable("Transactions", (string)null);
+                    b.HasIndex("PaymentSnapshotId")
+                        .IsUnique();
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("Domain.Domains.TransactionAttribute", b =>
@@ -133,18 +133,17 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("TransactionAttributes", (string)null);
+                    b.ToTable("TransactionAttributes");
                 });
 
-            modelBuilder.Entity("Domain.Domains.PaymentSnapshot", b =>
+            modelBuilder.Entity("Domain.Domains.Transaction", b =>
                 {
-                    b.HasOne("Domain.Domains.Transaction", "Transaction")
-                        .WithOne("PaymentSnapshot")
-                        .HasForeignKey("Domain.Domains.PaymentSnapshot", "TransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Domain.Domains.PaymentSnapshot", "PaymentSnapshot")
+                        .WithOne("Transaction")
+                        .HasForeignKey("Domain.Domains.Transaction", "PaymentSnapshotId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("Transaction");
+                    b.Navigation("PaymentSnapshot");
                 });
 
             modelBuilder.Entity("Domain.Domains.TransactionAttribute", b =>
@@ -158,11 +157,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Transaction");
                 });
 
+            modelBuilder.Entity("Domain.Domains.PaymentSnapshot", b =>
+                {
+                    b.Navigation("Transaction")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Domains.Transaction", b =>
                 {
                     b.Navigation("Attributes");
-
-                    b.Navigation("PaymentSnapshot");
                 });
 #pragma warning restore 612, 618
         }
