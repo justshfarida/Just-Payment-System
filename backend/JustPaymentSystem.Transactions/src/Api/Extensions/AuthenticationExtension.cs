@@ -20,7 +20,7 @@ public static class AuthenticationExtension
                     ValidIssuer = configuration["Keycloak:Issuer"]
                 };
 
-                options.RequireHttpsMetadata = !isDevelopment;
+                options.RequireHttpsMetadata = false;
             });
             return services;
         }
