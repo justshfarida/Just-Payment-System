@@ -62,7 +62,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
 
         // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+        options.RequireHttpsMetadata = false;
     });
 
 builder.Services.AddAuthorization();

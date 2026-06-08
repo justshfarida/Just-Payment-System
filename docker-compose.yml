@@ -48,7 +48,7 @@ services:
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health/ready"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 15s
       timeout: 2s
       retries: 15
@@ -71,11 +71,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=5055
       # Keycloak
-      - Keycloak__Authority=http://keycloak:8080/auth/realms/just-pay
+      - Keycloak__Authority=http://keycloak:8080/realms/just-pay
       - Keycloak__ClientId=gateway
       - Keycloak__Audience=account
-      - Keycloak__Issuer=http://keycloak:8080/auth/realms/just-pay
-      - Keycloak__MetadataAddress=http://keycloak:8080/auth/realms/just-pay/.well-known/openid-configuration
+      - Keycloak__Issuer=http://keycloak:8080/realms/just-pay
+      - Keycloak__MetadataAddress=http://keycloak:8080/realms/just-pay/.well-known/openid-configuration
 
       # Merchant Service
       - ReverseProxy__Clusters__merchantCluster__Destinations__mercahntService__Address=http://merchant-service:8080/
@@ -101,11 +101,11 @@ services:
       - ASPNETCORE_HTTP_PORTS=5153
       - ConnectionStrings__Default=Host=postgres;Port=5432;Database=JustPay;Username=postgres;Password=postgres
 
-      - Keycloak__Authority=http://keycloak:8080/auth/realms/just-pay
+      - Keycloak__Authority=http://keycloak:8080/realms/just-pay
       - Keycloak__ClientId=merchant-service
       - Keycloak__Audience=account
-      - Keycloak__Issuer=http://keycloak:8080/auth/realms/just-pay
-      - Keycloak__MetadataAddress=http://keycloak:8080/auth/realms/just-pay/.well-known/openid-configuration
+      - Keycloak__Issuer=http://keycloak:8080/realms/just-pay
+      - Keycloak__MetadataAddress=http://keycloak:8080/realms/just-pay/.well-known/openid-configuration
 
       - ApiGateway__BaseAddress=http://just-pay.gateway:5055
 
