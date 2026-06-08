@@ -1,7 +1,10 @@
 
 using Application.Interfaces;
+using Application.Interfaces.MappingProfiles;
+using Application.MappingProfiles;
 using Application.Services;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api
@@ -22,6 +25,7 @@ namespace Api
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IMerchantRepository,  MerchantRepository>();
             builder.Services.AddScoped<IMerchantService, MerchantService>();
+            builder.Services.AddScoped<IMerchantMapper, MerchantMapper>();
 
             var app = builder.Build();
 

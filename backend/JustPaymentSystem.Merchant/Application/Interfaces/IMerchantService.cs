@@ -10,5 +10,6 @@ namespace Application.Interfaces
     public interface IMerchantService
     {
         Task<WebhookSettingsResponseDto?> GetMerchantWebhookSettingsAsync(Guid merchantId, string eventType);
+        Task CreateMerchant(Guid userId, CreateMerchantDto request, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Dtos;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,6 +13,14 @@ public class MerchantsController : ControllerBase
     public MerchantsController(IMerchantService merchantService)
     {
         _merchantService = merchantService;
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMerchant([FromHeader] Guid userId, CreateMerchantDto request, CancellationToken cancellationToken)
+    {
+        await _merchantService.CreateMerchant(userId, request, cancellationToken);
+        return Ok();
     }
 
     [HttpGet("{id:guid}/webhooks")]

@@ -2,13 +2,13 @@
 using Domain.Entitites;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence;
+namespace Infrastructure.Persistence.Repositories;
 
-public class MerchantRepository : IMerchantRepository
+public class MerchantRepository : RepositoryBase<Merchant>, IMerchantRepository
 {
     private readonly MerchantDbContext _context;
 
-    public MerchantRepository(MerchantDbContext context)
+    public MerchantRepository(MerchantDbContext context) : base(context)
     {
         _context = context;
     }

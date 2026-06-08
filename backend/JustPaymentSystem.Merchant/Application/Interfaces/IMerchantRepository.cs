@@ -1,13 +1,9 @@
 ﻿using Domain.Entitites;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Domain.Interfaces;
 
 namespace Application.Interfaces
 {
-    public interface IMerchantRepository
+    public interface IMerchantRepository : IRepositoryBase<Merchant>
     {
         Task<Merchant?> GetWebhookSettingsAsync(Guid merchantId, string eventType);
         Task AddMerchantAsync(Merchant merchant);
