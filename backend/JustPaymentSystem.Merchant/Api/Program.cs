@@ -1,4 +1,6 @@
 
+using System.Security.Claims;
+using Api.Extensions;
 using Application.Interfaces;
 using Application.Interfaces.MappingProfiles;
 using Application.MappingProfiles;
@@ -14,6 +16,7 @@ namespace Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
 
             // Add services to the container.
             builder.Services.AddDbContext<MerchantDbContext>(options =>
@@ -26,23 +29,34 @@ namespace Api
             builder.Services.AddScoped<IMerchantRepository,  MerchantRepository>();
             builder.Services.AddScoped<IMerchantService, MerchantService>();
             builder.Services.AddScoped<IMerchantMapper, MerchantMapper>();
+            builder.Services.AddSwaggerWithAuth(builder.Configuration);
+            builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.MapOpenApi();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+    {
+        options.OAuthClientId(keycloakClientId);
+        options.OAuthUsePkce();
+    });
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
-
+            app.MapGet("/me", (ClaimsPrincipal user) =>
+            {
+                return user;
+            });
             app.Run();
         }
     }

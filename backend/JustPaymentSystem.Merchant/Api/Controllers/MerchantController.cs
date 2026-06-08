@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using System.Security.Claims;
+using Application.Dtos;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ public class MerchantsController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateMerchant(CreateMerchantDto request, CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? throw new InvalidOperationException("User ID claim not found."));
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User ID claim not found."));
         await _merchantService.CreateMerchant(userId, request, cancellationToken);
         return Ok();
     }
