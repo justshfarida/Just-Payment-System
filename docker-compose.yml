@@ -30,6 +30,7 @@ services:
       - "./infrastructure/rabbitmq_data:/var/lib/rabbitmq"
   my-keycloak:
     image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
     environment:
       KC_HTTP_RELATIVE_PATH: /auth
       KC_HOSTNAME: localhost
@@ -47,7 +48,7 @@ services:
       KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: true
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health/ready"]
       interval: 15s
       timeout: 2s
       retries: 15
@@ -60,6 +61,7 @@ services:
       - "7443:7443"
   gateway:
     image: just-pay.gateway
+    container_name: just-pay.gateway
     build:
       context: ./backend/JustPaymentSystem.Gateway
       dockerfile: Dockerfile
@@ -88,6 +90,7 @@ services:
       - ReverseProxy__Clusters__clientCluster__Destinations__clientService__Address=http://frontend:80/
   transactions:
     image: just-pay.transaction
+    container_name: just-pay.transaction
     build:
       context: ./backend/JustPaymentSystem.Transactions/src
       dockerfile: Dockerfile
