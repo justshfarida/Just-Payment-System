@@ -1,8 +1,9 @@
 
 using System.Security.Claims;
 using Api.Extensions;
-using Application.Interfaces;
 using Application.Interfaces.MappingProfiles;
+using Application.Interfaces.Repository;
+using Application.Interfaces.Services;
 using Application.MappingProfiles;
 using Application.Services;
 using Infrastructure.Persistence;

@@ -1,6 +1,8 @@
 ﻿using Application.Dtos;
-using Application.Interfaces;
 using Application.Interfaces.MappingProfiles;
+using Application.Interfaces.Repositories;
+using Application.Interfaces.Repository;
+using Application.Interfaces.Services;
 
 namespace Application.Services;
 
