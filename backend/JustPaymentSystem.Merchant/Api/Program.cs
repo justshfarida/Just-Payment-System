@@ -1,11 +1,14 @@
 
 using System.Security.Claims;
 using Api.Extensions;
+using Api.Middlewares;
+using Application;
 using Application.Interfaces.MappingProfiles;
-using Application.Interfaces.Repository;
+using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using Application.MappingProfiles;
 using Application.Services;
+using FluentValidation;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +28,18 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMerchantRepository,  MerchantRepository>();
 builder.Services.AddScoped<IMerchantService, MerchantService>();
 builder.Services.AddScoped<IMerchantMapper, MerchantMapper>();
+builder.Services.AddScoped<IApiCredentialMapper, ApiCredentialMapper>();
+builder.Services.AddScoped<IApiCredentialRepository, ApiCredentialRepository>();
+builder.Services.AddScoped<IApiCredentialService, ApiCredentialService>();
+builder.Services.AddScoped<IEventTypeMapper, EventTypeMapper>();
+builder.Services.AddScoped<IEventTypeRepository, EventTypeRepository>();
+builder.Services.AddScoped<IEventTypeService, EventTypeService>();
+builder.Services.AddScoped<IBusinessTypeMapper, BusinessTypeMapper>();
+builder.Services.AddScoped<IBusinessTypeRepository, BusinessTypeRepository>();
+builder.Services.AddScoped<IBusinessTypeService, BusinessTypeService>();
+builder.Services.AddValidatorsFromAssembly(typeof(ApplicationAssembly).Assembly);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddSwaggerWithAuth(builder.Configuration);
 builder.Services.AddAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 
@@ -46,7 +61,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseExceptionHandler();
 
 app.MapControllers();
 app.MapGet("/me", (ClaimsPrincipal user) =>

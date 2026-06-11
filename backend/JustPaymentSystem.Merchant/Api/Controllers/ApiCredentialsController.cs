@@ -1,9 +1,8 @@
-﻿using Application.Helpers;
-using Infrastructure.Persistence;
+﻿using System.Security.Claims;
+using Application.Dtos;
+using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -11,51 +10,66 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class ApiCredentialsController : ControllerBase
 {
-    private readonly MerchantDbContext _db;
+    private readonly IApiCredentialService _apiCredentialService;
 
-    public ApiCredentialsController(MerchantDbContext merchantDbContext)
+    public ApiCredentialsController(IApiCredentialService apiCredentialService)
     {
-        _db = merchantDbContext;
+        _apiCredentialService = apiCredentialService;
     }
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User ID claim not found."));
-        var apiCredentials = await _db.ApiCredentials
-            .Include(c => c.Merchant)
-            .AsNoTracking()
-            .Where(c => c.Merchant != null && c.Merchant!.UserId == userId)
-            .Select(c => new 
-            {
-                merchant_id = c.Merchant!.UserId,
-                secret_key = c.SecretKeyHash
-            })
-            .FirstOrDefaultAsync();
+        var userId = GetUserId();
+        var apiCredentials = await _apiCredentialService.GetByUserIdAsync(userId, cancellationToken);
 
         return apiCredentials is null ? NotFound() : Ok(apiCredentials);
     }
 
-    [HttpPatch("/secret-key")]
+    [HttpPost]
     [Authorize]
-    public async Task<IActionResult> GenerateSecretKey()
+    public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User ID claim not found."));
-        var apiCredentials = await _db.ApiCredentials
-            .Include(c => c.Merchant)
-            .Where(c => c.Merchant != null && c.Merchant!.UserId == userId)
-            .FirstOrDefaultAsync();
+        var userId = GetUserId();
+        var apiCredentials = await _apiCredentialService.CreateAsync(userId, cancellationToken);
 
-        if(apiCredentials == null)
-        {
-            return NotFound();
-        }
-
-        string secretKeyHash = SecretKeyGeneratorHelper.GenerateSecretKey();
-        apiCredentials.SecretKeyHash = secretKeyHash;
-        await _db.SaveChangesAsync();
-        return Ok(secretKeyHash);
+        return CreatedAtAction(nameof(Get), apiCredentials);
     }
 
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> Update(UpdateApiCredentialDto request, CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        var apiCredentials = await _apiCredentialService.UpdateAsync(userId, request, cancellationToken);
+
+        return apiCredentials is null ? NotFound() : Ok(apiCredentials);
+    }
+
+    [HttpPatch("secret-key")]
+    [Authorize]
+    public async Task<IActionResult> RegenerateSecretKey(CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        var result = await _apiCredentialService.RegenerateSecretKeyAsync(userId, cancellationToken);
+
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> Delete(CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        var deleted = await _apiCredentialService.DeleteAsync(userId, cancellationToken);
+
+        return deleted ? NoContent() : NotFound();
+    }
+
+    private Guid GetUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new InvalidOperationException("User ID claim not found."));
+    }
 }

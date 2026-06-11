@@ -1,7 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Interfaces.MappingProfiles;
 using Application.Interfaces.Repositories;
-using Application.Interfaces.Repository;
 using Application.Interfaces.Services;
 
 namespace Application.Services;
@@ -51,14 +50,11 @@ public class MerchantService : IMerchantService
         var isVOENDuplicate = await _repository.
                 ExistsAsync(m => m.VOEN == request.VOEN);
         if (isEmailDuplicate || isPhoneDuplicate)
-        {
             throw new Exception("Email or phone number already exists.");
-        }
+        
 
         if (isVOENDuplicate)
-        {
             throw new Exception("VOEN already exists.");
-        }
 
         var merchant = _mapper.Map(request, userId);
         await _repository.CreateMerchantAsync(merchant);

@@ -5,6 +5,7 @@ namespace Application.Interfaces.Repositories;
 
 public interface IApiCredentialRepository : IRepositoryBase<ApiCredential>
 {
-    Task<ApiCredential?> GetByMerchantIdAsync(Guid merchantId);
-    Task<ApiCredential?> GetByUserIdAsync(Guid userId);
+    Task<ApiCredential?> GetByMerchantIdAsync(Guid merchantId, bool trackChanges = false);
+    Task<ApiCredential?> GetByUserIdAsync(Guid userId, bool trackChanges = false);
+    Task SaveChangesAsync();
 }

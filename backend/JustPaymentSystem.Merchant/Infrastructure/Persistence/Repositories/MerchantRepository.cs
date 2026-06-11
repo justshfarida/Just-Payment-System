@@ -13,6 +13,13 @@ public class MerchantRepository : RepositoryBase<Merchant>, IMerchantRepository
         _context = context;
     }
 
+    public async Task<Merchant?> GetByUserIdAsync(Guid userId)
+    {
+        return await _context.Merchants
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.UserId == userId);
+    }
+
     public async Task<Merchant?> GetWebhookSettingsAsync(Guid merchantId, string eventType)
     {
         // Fetch the merchant along with their active webhook details and specific event subscriptions
